@@ -1,12 +1,11 @@
 # 集群、分布式
-Sa-token 在集群、分布式下的解决方案
+Sa-Token 在集群、分布式下的解决方案
 
 ---
 
 
-
-### 分布式下的数据同步问题
-单机版的`Session`在分布式环境下一般不能正常工作，为此我们需要对框架做一些特定的处理。
+### 分布式会话
+分布式架构下的第一个难题便是数据同步，单机版的`Session`在分布式环境下一般不能正常工作，为此我们需要对框架做一些特定的处理。
 
 首先我们要明白，分布式环境下为什么`Session`会失效？因为用户在一个节点对会话做出的更改无法实时同步到其它的节点，
 这就导致一个很严重的问题：如果用户在节点一上已经登录成功，那么当下一次的请求落在节点二上时，对节点二来讲，此用户仍然是未登录状态。
@@ -26,6 +25,28 @@ Sa-token 在集群、分布式下的解决方案
 由于`jwt`模式不在服务端存储数据，对于比较复杂的业务可能会功能受限，因此更加推荐使用方案三
 
 
+### 微服务网关鉴权
+由于大多数常见网关组件基于`webflux`编写，从底层上脱离了"ServletAPI"模型（如`Gateway`、`Soul`等），这就导致很多底层依赖ServletAPI的权限认证框架无法在网关处使用。
+
+为此`Sa-Token`自`v1.16.0`版本开始提供了`Reactor响应式模型`web框架的starter依赖包，你可以据此轻松完成网关鉴权需求，
+详细请参考：[全局过滤器](/use/global-filter)
+
+
+
+### 依赖引入说明 
+
+虽然在[开始]章节已经说明了依赖引入规则，但是交流群里不少小伙伴提出bug解决到最后发现都是因为依赖引入错误引起的，此处再次重点强调一下：
+**在微服务架构中使用Sa-Token时，网关和内部服务要分开引入Sa-Token依赖（不要直接在顶级父pom中引入Sa-Token）**
+
+总体来讲，需要关注的依赖就是两个：`sa-token-spring-boot-starter` 和 `sa-token-reactor-spring-boot-starter`，至于怎么分辨我们需要引入哪个呢？这个要看你使用的基础框架
+
+对于内部基础服务来讲，我们一般都是使用SpringBoot默认的web模块：SpringMVC，因为这个SpringMVC是基于Servlet模型的，在这里我们需要引入的是`sa-token-spring-boot-starter`
+
+对于网关服务，大体来讲分为两种：
+- 一种是基于Servlet模型的，如：Zuul，我们需要引入的是：`sa-token-spring-boot-starter`，详细戳：[在SpringBoot环境集成](/start/example)
+- 一种是基于Reactor模型的，如：SpringCloud Gateway、Soul 等等，我们需要引入的是：`sa-token-reactor-spring-boot-starter`，**并且注册全局过滤器！**，详细戳：[在WebFlux环境集成](/start/webflux-example)
+
+切不可直接在一个项目里同时引入这两个依赖，否则会造成项目无法启动
 
 
 

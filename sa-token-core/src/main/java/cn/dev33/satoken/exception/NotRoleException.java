@@ -44,7 +44,6 @@ public class NotRoleException extends SaTokenException {
 	}
 
 	public NotRoleException(String role, String loginKey) {
-		// 这里到底要不要拼接上loginKey呢？纠结
 		super("无此角色：" + role);
 		this.role = role;
 		this.loginKey = loginKey;

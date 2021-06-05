@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import cn.dev33.satoken.SaTokenManager;
+import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.fun.SaRetFunction;
 
 /**
  * Session Model
@@ -34,6 +35,7 @@ public class SaSession implements Serializable {
 	 * 构建一个Session对象
 	 */
 	public SaSession() {
+		this(null);
 	}
 
 	/**
@@ -43,6 +45,8 @@ public class SaSession implements Serializable {
 	public SaSession(String id) {
 		this.id = id;
 		this.createTime = System.currentTimeMillis();
+ 		// $$ 通知监听器 
+ 		SaManager.getSaTokenListener().doCreateSession(id);
 	}
 
 	/**
@@ -243,12 +247,14 @@ public class SaSession implements Serializable {
 	 * 更新Session（从持久库更新刷新一下）
 	 */
 	public void update() {
-		SaTokenManager.getSaTokenDao().updateSession(this);
+		SaManager.getSaTokenDao().updateSession(this);
 	}
 
 	/** 注销Session (从持久库删除) */
 	public void logout() {
-		SaTokenManager.getSaTokenDao().deleteSession(this.id);
+		SaManager.getSaTokenDao().deleteSession(this.id);
+ 		// $$ 通知监听器 
+ 		SaManager.getSaTokenListener().doLogoutSession(id);
 	}
 
 	/** 当Session上的tokenSign数量为零时，注销会话 */
@@ -263,7 +269,7 @@ public class SaSession implements Serializable {
 	 * @return 此Session的剩余存活时间 (单位: 秒)
 	 */
 	public long getTimeout() {
-		return SaTokenManager.getSaTokenDao().getSessionTimeout(this.id);
+		return SaManager.getSaTokenDao().getSessionTimeout(this.id);
 	}
 	
 	/**
@@ -271,7 +277,7 @@ public class SaSession implements Serializable {
 	 * @param timeout 过期时间 (单位: 秒) 
 	 */
 	public void updateTimeout(long timeout) {
-		SaTokenManager.getSaTokenDao().updateSessionTimeout(this.id, timeout);
+		SaManager.getSaTokenDao().updateSessionTimeout(this.id, timeout);
 	}
 	
 	/**
@@ -280,7 +286,7 @@ public class SaSession implements Serializable {
 	 */
 	public void updateMinTimeout(long minTimeout) {
 		if(getTimeout() < minTimeout) {
-			SaTokenManager.getSaTokenDao().updateSessionTimeout(this.id, minTimeout);
+			SaManager.getSaTokenDao().updateSessionTimeout(this.id, minTimeout);
 		}
 	}
 
@@ -290,7 +296,7 @@ public class SaSession implements Serializable {
 	 */
 	public void updateMaxTimeout(long maxTimeout) {
 		if(getTimeout() > maxTimeout) {
-			SaTokenManager.getSaTokenDao().updateSessionTimeout(this.id, maxTimeout);
+			SaManager.getSaTokenDao().updateSessionTimeout(this.id, maxTimeout);
 		}
 	}
 	
@@ -318,6 +324,24 @@ public class SaSession implements Serializable {
 	 */
 	public <T> T get(String key, T defaultValue) {
 		return getValueByDefaultValue(get(key), defaultValue);
+	}
+	
+	/**
+	 * 
+	 * 取值 (如果值为null，则执行fun函数获取值) 
+	 * @param <T> 返回值的类型 
+	 * @param key key 
+	 * @param fun 值为null时执行的函数 
+	 * @return 值 
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T get(String key, SaRetFunction fun) {
+		Object value = get(key);
+		if(value == null) {
+			value = fun.run();
+			set(key, value);
+		}
+		return (T) value;
 	}
 	
 	/**
