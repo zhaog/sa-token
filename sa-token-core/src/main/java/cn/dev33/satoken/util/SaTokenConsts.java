@@ -11,15 +11,19 @@ public class SaTokenConsts {
 	// =================== sa-token版本信息 ===================  
 	
 	/**
-	 * sa-token 版本号 
+	 * sa-token 当前版本号 
 	 */
-	public static final String VERSION_NO = "v1.15.0";
+	public static final String VERSION_NO = "v1.19.0";
 
 	/**
 	 * sa-token 开源地址 
 	 */
-	public static final String GITHUB_URL = "https://github.com/click33/sa-token";
+	public static final String GITHUB_URL = "https://github.com/dromara/sa-token";
 
+	/**
+	 * sa-token 开发文档地址 
+	 */
+	public static final String DEV_DOC_URL = "http://sa-token.dev33.cn";
 	
 	// =================== 常量key标记 ===================  
 	
@@ -74,7 +78,7 @@ public class SaTokenConsts {
 	/**
 	 * token风格: tik风格 (2_14_16) 
 	 */
-	public static final String TOKEN_STYLE_RANDOM_TIK = "tik"; 
+	public static final String TOKEN_STYLE_TIK = "tik"; 
 
 	
 	// =================== 其它 ===================  
@@ -83,5 +87,10 @@ public class SaTokenConsts {
 	 * 连接token前缀和token值的字符 
 	 */
 	public static final String TOKEN_CONNECTOR_CHAT  = " "; 
+	
+	/**
+	 * 切面、拦截器、过滤器等各种组件的注册优先级顺序
+	 */
+	public static final int ASSEMBLY_ORDER = -100;
 	
 }

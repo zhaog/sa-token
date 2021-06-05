@@ -1,24 +1,21 @@
-# 权限验证
+# 权限认证
 --- 
 
 
 ### 核心思想
 
-所谓权限验证，验证的核心就是一个账号是否拥有一个权限码 <br/>
+所谓权限认证，认证的核心就是一个账号是否拥有一个权限码 <br/>
 有，就让你通过。没有？那么禁止访问!
 
-再往底了说，就是每个账号都会拥有一个权限码集合，我来验证这个集合中是否包含指定的权限码 <br/>
-例如：当前账号拥有权限码集合：`["user:add", "user:delete", "user:get"]`，这时候我来验证权限 `"user:update"`，则其结果就是：**验证失败，禁止访问**
-(注意: 冒号无特殊含义,可有可无)
-
-![无权限](../static/not-jur.png)
+再往底了说，就是每个账号都会拥有一个权限码集合，我来校验这个集合中是否包含指定的权限码 <br/>
+例如：当前账号拥有权限码集合：`["user-add", "user-delete", "user-get"]`，这时候我来校验权限 `"user-update"`，则其结果就是：**验证失败，禁止访问** <br/>
 
 所以现在问题的核心就是: 
 1. 如何获取一个账号所拥有的的权限码集合
 2. 本次操作需要验证的权限码是哪个 
 
 ### 获取当前账号权限码集合
-因为每个项目的需求不同，其权限设计也千变万化，【获取当前账号权限码集合】这一操作不可能内置到框架中，
+因为每个项目的需求不同，其权限设计也千变万化，因此【获取当前账号权限码集合】这一操作不可能内置到框架中，
 所以`sa-token`将此操作以接口的方式暴露给你，以方便的你根据自己的业务逻辑进行重写
 
 你需要做的就是新建一个类，实现`StpInterface`接口，例如以下代码：
@@ -68,45 +65,47 @@ public class StpInterfaceImpl implements StpInterface {
 }
 ```
 
-可参考代码：[码云：StpInterfaceImpl.java](https://gitee.com/sz6/sa-token/blob/master/sa-token-demo-springboot/src/main/java/com/pj/satoken/StpInterfaceImpl.java)
+可参考代码：[码云：StpInterfaceImpl.java](https://gitee.com/dromara/sa-token/blob/master/sa-token-demo/sa-token-demo-springboot/src/main/java/com/pj/satoken/StpInterfaceImpl.java)
+
+<!-- todo: 缓存逻辑 -->
 
 
 
-### 权限验证
+### 权限认证
 然后就可以用以下api来鉴权了
 
 ``` java
 // 当前账号是否含有指定权限, 返回true或false 
-StpUtil.hasPermission("user:update");		
+StpUtil.hasPermission("user-update");		
 
 // 当前账号是否含有指定权限, 如果验证未通过，则抛出异常: NotPermissionException 
-StpUtil.checkPermission("user:update");		
+StpUtil.checkPermission("user-update");		
 
 // 当前账号是否含有指定权限 [指定多个，必须全部验证通过] 
-StpUtil.checkPermissionAnd("user:update", "user:delete");		
+StpUtil.checkPermissionAnd("user-update", "user-delete");		
 
 // 当前账号是否含有指定权限 [指定多个，只要其一验证通过即可] 
-StpUtil.checkPermissionOr("user:update", "user:delete");		
+StpUtil.checkPermissionOr("user-update", "user-delete");		
 ```
 
 扩展：`NotPermissionException` 对象可通过 `getLoginKey()` 方法获取具体是哪个 `StpLogic` 抛出的异常
 
 
-### 角色验证
+### 角色认证
 在sa-token中，角色和权限可以独立验证
 
 ``` java
 // 当前账号是否含有指定角色标识, 返回true或false 
-StpUtil.hasRole("user:update");		
+StpUtil.hasRole("super-admin");		
 
 // 当前账号是否含有指定角色标识, 如果验证未通过，则抛出异常: NotRoleException 
-StpUtil.checkRole("user:update");		
+StpUtil.checkRole("super-admin");		
 
 // 当前账号是否含有指定角色标识 [指定多个，必须全部验证通过] 
-StpUtil.checkRoleAnd("user:update", "user:delete");		
+StpUtil.checkRoleAnd("super-admin", "shop-admin");		
 
 // 当前账号是否含有指定角色标识 [指定多个，只要其一验证通过即可] 
-StpUtil.checkRoleOr("user:update", "user:delete");		
+StpUtil.checkRoleOr("super-admin", "shop-admin");		
 ```
 
 扩展：`NotRoleException` 对象可通过 `getLoginKey()` 方法获取具体是哪个 `StpLogic` 抛出的异常
@@ -115,7 +114,30 @@ StpUtil.checkRoleOr("user:update", "user:delete");
 
 ### 拦截全局异常
 有同学要问，鉴权失败，抛出异常，然后呢？要把异常显示给用户看吗？**当然不可以！** <br>
-你可以创建一个全局异常拦截器，统一返回给前端的格式，参考：[码云：GlobalException.java](https://gitee.com/sz6/sa-token/blob/master/sa-token-demo-springboot/src/main/java/com/pj/test/GlobalException.java)
+你可以创建一个全局异常拦截器，统一返回给前端的格式，参考：[码云：GlobalException.java](https://gitee.com/dromara/sa-token/blob/master/sa-token-demo/sa-token-demo-springboot/src/main/java/com/pj/test/GlobalException.java)
+
+
+### 权限通配符
+Sa-Token允许你根据通配符指定泛权限，例如当一个账号拥有`user*`的权限时，`user-add`、`user-delete`、`user-update`都将匹配通过
+
+``` java
+// 当拥有 user* 权限时
+StpUtil.hasPermission("user-add");        // true
+StpUtil.hasPermission("user-update");     // true
+StpUtil.hasPermission("art-add");         // false
+
+// 当拥有 *-delete 权限时
+StpUtil.hasPermission("user-add");        // false
+StpUtil.hasPermission("user-delete");     // true
+StpUtil.hasPermission("art-delete");      // true
+
+// 当拥有 *.js 权限时
+StpUtil.hasPermission("index.js");        // true
+StpUtil.hasPermission("index.css");       // false
+StpUtil.hasPermission("index.html");      // false
+```
+
+上帝权限：当一个账号拥有 `"*"` 权限时，他可以验证通过任何权限码 (角色认证同理)
 
 
 ### 如何把权限精确搭到按钮级？

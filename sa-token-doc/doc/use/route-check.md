@@ -10,14 +10,14 @@
 
 
 ## 1、注册路由拦截器
-以`SpringBoot2.0`为例, 新建配置类`MySaTokenConfig.java`
+以`SpringBoot2.0`为例, 新建配置类`SaTokenConfigure.java`
 ``` java 
 @Configuration
-public class MySaTokenConfig implements WebMvcConfigurer {
+public class SaTokenConfigure implements WebMvcConfigurer {
 	// 注册sa-token的登录拦截器
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		// 注册登录拦截器，并排除登录接口地址 
+		// 注册登录拦截器，并排除登录接口或其他可匿名访问的接口地址 (与注解拦截器无关)
 		registry.addInterceptor(new SaRouteInterceptor()).addPathPatterns("/**").excludePathPatterns("/user/doLogin"); 
 	}
 }
@@ -31,7 +31,7 @@ public class MySaTokenConfig implements WebMvcConfigurer {
 
 ``` java 
 @Configuration
-public class MySaTokenConfig implements WebMvcConfigurer {
+public class SaTokenConfigure implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// 注册路由拦截器，自定义验证规则 
@@ -53,7 +53,7 @@ public class MySaTokenConfig implements WebMvcConfigurer {
 
 ``` java 
 @Configuration
-public class MySaTokenConfig implements WebMvcConfigurer {
+public class SaTokenConfigure implements WebMvcConfigurer {
 	// 注册sa-token的拦截器
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -100,7 +100,7 @@ public class MySaTokenConfig implements WebMvcConfigurer {
 
 
 ## 注意事项
-在`v1.14`及以前版本下，路由拦截器提供了提供了封装式写法，该方法代码比较冗余，在`v1.15`版本已移除，解决方案如下：
+在`v1.14`及以前版本下，路由拦截器提供了封装式写法，该方法代码比较冗余，在`v1.15`版本已移除，替代方案如下：
 
 ``` java
 // 原写法

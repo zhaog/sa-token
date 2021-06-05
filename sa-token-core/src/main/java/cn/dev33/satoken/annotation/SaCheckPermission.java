@@ -26,5 +26,11 @@ public @interface SaCheckPermission {
 	 * @return 验证模式
 	 */
 	SaMode mode() default SaMode.AND;
-	
+
+    /**
+     * 多账号体系下所属的账号体系标识 
+     * @return see note 
+     */
+	String key() default "";
+
 }

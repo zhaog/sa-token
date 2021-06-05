@@ -1,16 +1,16 @@
 <p align="center">
-	<img alt="logo" src="https://gitee.com/sz6/sa-token/raw/master/sa-token-doc/doc/logo.png" width="150" height="150">
+	<img alt="logo" src="https://gitee.com/dromara/sa-token/raw/master/sa-token-doc/doc/logo.png" width="150" height="150">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">sa-token v1.15.0</h1>
-<h4 align="center">这可能是史上功能最全的Java权限认证框架！</h4>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Sa-Token v1.19.0</h1>
+<h4 align="center">这可能是史上功能最全的 Java 权限认证框架！</h4>
 <h4 align="center">
-	<a href="https://gitee.com/sz6/sa-token/stargazers"><img src="https://gitee.com/sz6/sa-token/badge/star.svg"></a>
-	<a href="https://github.com/click33/sa-token"><img src="https://img.shields.io/badge/sa--token-v1.15.0-2B9939"></a>
-	<a href="https://github.com/click33/sa-token/stargazers"><img src="https://img.shields.io/github/stars/click33/sa-token"></a>
-	<a href="https://github.com/click33/sa-token/watchers"><img src="https://img.shields.io/github/watchers/click33/sa-token"></a>
-	<a href="https://github.com/click33/sa-token/network/members"><img src="https://img.shields.io/github/forks/click33/sa-token"></a>
-	<a href="https://github.com/click33/sa-token/issues"><img src="https://img.shields.io/github/issues/click33/sa-token.svg"></a>
-	<a href="https://github.com/click33/sa-token/blob/master/LICENSE"><img src="https://img.shields.io/github/license/click33/sa-token.svg"></a>
+	<a href="https://gitee.com/dromara/sa-token/stargazers"><img src="https://gitee.com/dromara/sa-token/badge/star.svg"></a>
+	<a href="https://gitee.com/dromara/sa-token/members"><img src="https://gitee.com/dromara/sa-token/badge/fork.svg"></a>
+	<a href="https://github.com/dromara/sa-token/stargazers"><img src="https://img.shields.io/github/stars/dromara/sa-token?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/dromara/sa-token/network/members"><img src="https://img.shields.io/github/forks/dromara/sa-token?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/dromara/sa-token/watchers"><img src="https://img.shields.io/github/watchers/dromara/sa-token?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/dromara/sa-token/issues"><img src="https://img.shields.io/github/issues/dromara/sa-token.svg?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/dromara/sa-token/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/sa-token.svg?style=flat-square"></a>
 </h4>
 
 ---
@@ -18,17 +18,16 @@
 
 ## 在线资料
 
-- [官网首页：http://sa-token.dev33.cn/](http://sa-token.dev33.cn/)
+- [在线文档：http://sa-token.dev33.cn/](http://sa-token.dev33.cn/)
 
-- [在线文档：http://sa-token.dev33.cn/doc/index.html](http://sa-token.dev33.cn/doc/index.html)
+- [调查问卷：Sa-Token 邀您填写满意度调查问卷](https://wj.qq.com/s2/8475114/2f6a/)
 
 - [需求提交：我们深知一个优秀的项目需要海纳百川，点我在线提交需求](http://sa-app.dev33.cn/wall.html?name=sa-token)
 
-- [开源不易，求鼓励，点个star吧](###)
-
+- [开源不易，求鼓励，点个star吧 ！](###)
 
 ## Sa-Token是什么？
-sa-token是一个轻量级Java权限认证框架，主要解决：登录认证、权限认证、Session会话、单点登录、OAuth2.0 等一系列权限相关问题
+Sa-Token是一个轻量级Java权限认证框架，主要解决：登录认证、权限认证、Session会话、单点登录、OAuth2.0 等一系列权限相关问题
 
 框架针对踢人下线、自动续签、前后台分离、分布式会话……等常见业务进行N多适配，通过sa-token，你可以以一种极简的方式实现系统的权限认证部分
 
@@ -41,12 +40,17 @@ sa-token是一个轻量级Java权限认证框架，主要解决：登录认证�
 有了sa-token，你所有的权限认证问题，都不再是问题！
 
 ## Sa-Token 能做什么？
+
+![sa-token-js](https://oss.dev33.cn/sa-token/doc/sa-token-js.png 's-w')
+
 - **登录验证** —— 轻松登录鉴权，并提供五种细分场景值
 - **权限验证** —— 适配RBAC权限模型，不同角色不同授权
 - **Session会话** —— 专业的数据缓存中心
 - **踢人下线** —— 将违规用户立刻清退下线
+- **账号封禁** —— 封禁指定账号，使其无法登陆，还可指定解封时间
 - **持久层扩展** —— 可集成Redis、Memcached等专业缓存中间件，重启数据不丢失
 - **分布式会话** —— 提供jwt集成和共享数据中心两种分布式会话方案
+- **微服务网关鉴权** —— 适配Gateway、Soul、Zuul等常见网关组件的请求拦截认证
 - **单点登录** —— 一处登录，处处通行
 - **模拟他人账号** —— 实时操作任意用户状态数据
 - **临时身份切换** —— 将会话身份临时切换为其它账号
@@ -60,7 +64,8 @@ sa-token是一个轻量级Java权限认证框架，主要解决：登录认证�
 - **会话治理** —— 提供方便灵活的会话查询接口
 - **记住我模式** —— 适配[记住我]模式，重启浏览器免验证
 - **密码加密** —— 提供密码加密模块，可快速MD5、SHA1、SHA256、AES、RSA加密 
-- **组件自动注入** —— 零配置与Spring等框架集成
+- **全局侦听器** —— 在用户登陆、注销、被踢下线等关键性操作时进行一些AOP操作
+- **开箱即用** —— 提供SpringMVC、WebFlux等常见web框架starter集成包，真正的开箱即用
 - **更多功能正在集成中...** —— 如有您有好想法或者建议，欢迎加群交流
 
 
@@ -85,6 +90,7 @@ StpUtil.checkLogin();
 当你受够Shiro、Security等框架的三拜九叩之后，你就会明白，相对于这些传统老牌框架，sa-token的API设计是多么的清爽！
 
 权限认证示例 (只有具有`user:add`权限的会话才可以进入请求)
+
 ``` java
 @SaCheckPermission("user:add")
 @RequestMapping("/user/insert")
@@ -116,67 +122,35 @@ StpUtil.setLoginId(10001, "PC");          // 指定设备标识登录
 StpUtil.logoutByLoginId(10001, "PC");     // 指定设备标识进行强制注销 (不同端不受影响)
 StpUtil.switchTo(10044);                  // 将当前会话身份临时切换为其它账号
 ```
-sa-token的API众多，请恕此处无法为您逐一展示，更多示例请戳官方在线文档
+sa-token API 众多，请恕此处无法为您逐一展示，更多示例请戳官方在线文档
 
 
-## 迭代模式
-sa-token的功能提案主要来源于社区，这意味着人人都可以参与到sa-token的功能定制，决定框架的未来走向，
-如果你有好的想法，可以在issues提出或者加入群一起交流，对于社区的提出的功能要求，主要分为以下几类：
-- 对框架新增特性功能且比较简单，会在第一时间进行开发
-- 对框架新增特性功能但比较复杂，会延后几个版本制定相应的计划后进行开发
-- 与框架设计理念不太相符，或超出权限认证范畴，将会视需求人数决定是否开发
+## Star 趋势
+[![giteye-chart](https://chart.giteye.net/gitee/dromara/sa-token/77YQZ6UK.png 'Gitee')](https://giteye.net/chart/77YQZ6UK)
+
+[![github-chart](https://starchart.cc/dromara/sa-token.svg 'GitHub')](https://starchart.cc/dromara/sa-token)
 
 
 ## 参与贡献
 众人拾柴火焰高，万丈高楼众人起！
-sa-token秉承着开放的思想，欢迎大家贡献代码，为框架添砖加瓦，对框架有卓越贡献者将会出现在贡献者名单里
+sa-token秉承着开放的思想，欢迎大家为框架添砖加瓦：
 
-1. 在gitee或者github上fork一份代码到自己的仓库
-2. clone自己的仓库到本地电脑
-3. 在本地电脑修改、commit、push
-4. 提交pr（点击：New Pull Request）
-5. 等待合并
+1. 核心代码：该部分需要开发者了解整个框架的架构，遵循已有代码规范进行bug修复或提交新功能
+2. 文档部分：需要以清晰明了的语句书写文档，力求简单易读，授人以鱼同时更授人以渔
+3. 社区建设：如果框架帮助到了您，希望您可以加入qq群参与交流，对不熟悉框架的新人进行排难解惑
+4. 框架推广：一个优秀的开源项目不能仅靠闭门造车，它还需要一定的推广方案让更多的人一起参与到项目中
+5. 其它部分：您可以参考项目issues与需求墙进行贡献
 
-作者寄语：参与贡献不光只有提交代码一个选择，点一个star、提一个issues都是对开源项目的促进，
-如果框架帮助到了你，欢迎你把框架推荐给你的朋友、同事使用，为sa-token的推广做一份贡献
-
-
-## 建议贡献的地方
-目前框架的主要有以下部分需要大家一起参与贡献：
-- 核心代码：该部分需要开发者了解整个框架的架构，遵循已有代码规范进行bug修复或提交新功能
-- 文档部分：需要以清晰明了的语句书写文档，力求简单易读，授人以鱼同时更授人以渔
-- 社区建设：如果框架帮助到了您，希望您可以加入qq群参与交流，对不熟悉框架的新人进行排难解惑
-- 框架推广：一个优秀的开源项目不能仅靠闭门造车，它还需要一定的推广方案让更多的人一起参与到项目中
-- 其它部分：您可以参考项目issues与需求墙进行贡献
-
-
-## 贡献者名单
-[省长](https://gitee.com/sz6)、
-[RockMan](https://gitee.com/njx33)、
-[click33](https://github.com/click33)、
-[AppleOfGray](https://gitee.com/appleOfGray)、
-[Auster](https://github.com/auster9021)、
-[ZhuBJ0510](https://gitee.com/zhubj0510)、
-[legg](https://gitee.com/legg321)、
-[xiaoshitou](https://gitee.com/smallstoneZ)、
-[zhangjiaxiaozhuo](https://gitee.com/zhangjiaxiaozhuo)、
-[离你多远](https://gitee.com/liniduoyuan)
-
-
-## 知乎专栏
-- [初识sa-token，一行代码搞定登录授权！](https://zhuanlan.zhihu.com/p/344106099)
-- [一个登录功能也能玩出这么多花样？sa-token带你轻松搞定多地登录、单地登录、同端互斥登录](https://zhuanlan.zhihu.com/p/344511415)
-- [浅谈踢人下线的设计思路！（附代码实现方案）](https://zhuanlan.zhihu.com/p/345844002)
-- 文章已在 [csdn](https://blog.csdn.net/shengzhang_/article/details/112593247)、
-[掘金](https://juejin.cn/post/6917250126650015751)、
-[开源中国](https://my.oschina.net/u/3503445/blog/4897816)、
-[博客园](https://www.cnblogs.com/shengzhang/p/14275558.html)、
-[知乎](https://zhuanlan.zhihu.com/p/344106099)
-等平台连载中...欢迎投稿
+作者寄语：参与贡献不光只有提交代码，点一个star、提一个issues都是对开源项目的促进，
+如果sa-token帮助到了你，欢迎你把框架推荐给朋友、同事使用，为sa-token的推广做一份贡献
 
 
 ## 使用sa-token的开源项目
-[**[ sa-plus]** 一个基于springboot架构的快速开发框架，内置代码生成器](https://gitee.com/sz6/sa-plus)
+[**[ sa-plus]** 一个基于springboot架构的快速开发框架，内置代码生成器](https://gitee.com/click33/sa-plus)
+
+[**[ jthink]** 一个基于springboot+sa-token+thymeleaf的博客系统](https://gitee.com/wtsoftware/jthink)
+
+[**[ dcy-fast]** 一个基于springboot+sa-token+mybatis-plus的后台管理系统，前端vue-element-admin，并且内置代码生成器](https://gitee.com/dcy421/dcy-fast)
 
 如果您的项目使用了sa-token，欢迎提交pr
 
@@ -186,12 +160,11 @@ sa-token秉承着开放的思想，欢迎大家贡献代码，为框架添砖加
 
 [**[ 小诺快速开发平台 ]** 基于SpringBoot2 + AntDesignVue全新快速开发平台，同时拥有三个版本](https://xiaonuo.vip/index#pricing)
 
+
 ## 交流群
-QQ交流群：[1002350610 点击加入](https://jq.qq.com/?_wv=1027&k=45H977HM)
+QQ交流群：1002350610 [点击加入](https://jq.qq.com/?_wv=1027&k=45H977HM)
 
-![扫码加群](https://color-test.oss-cn-qingdao.aliyuncs.com/sa-token/qq-group.png ':size=230')
-
-**微信群**
+微信交流群：
 
 ![微信群](https://dev33-test.oss-cn-beijing.aliyuncs.com/sa-token/i-wx-qr.png ':size=230')
 

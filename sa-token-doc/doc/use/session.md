@@ -110,8 +110,8 @@ session.logout();
 // 写值 
 session.set("name", "zhang"); 
 
-// 写值(只有在此key原本无值的时候才会写入)
-session.set("name", "zhang");
+// 写值 (只有在此key原本无值的时候才会写入)
+session.setDefaultValue("name", "zhang");
 
 // 取值
 session.get("name");
@@ -159,3 +159,4 @@ public void reset(HttpSession session) {
 **要点：**
 1. `SaSession` 与 `HttpSession` 没有任何关系，在`HttpSession`上写入的值，在`SaSession`中无法取出
 2. `HttpSession`并未被框架接管，在使用sa-token时，请在任何情况下均使用`SaSession`，不要使用`HttpSession` 
+
