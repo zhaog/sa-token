@@ -7,11 +7,11 @@
 因此Sa-Token提供AOP插件，你只需在`pom.xml`里添加如下依赖，便可以在任意层级使用注解鉴权
 
 ``` xml 
-<!-- sa-token整合SpringAOP实现注解鉴权 -->
+<!-- Sa-Token整合SpringAOP实现注解鉴权 -->
 <dependency>
 	<groupId>cn.dev33</groupId>
 	<artifactId>sa-token-spring-aop</artifactId>
-	<version>1.19.0</version>
+	<version>${sa.top.version}</version>
 </dependency>
 ```
 

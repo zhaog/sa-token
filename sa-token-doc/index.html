@@ -2,9 +2,9 @@
 <html lang="zh">
 	<head>
 		<meta charset="UTF-8">
-		<title>sa-token</title>
+		<title>Sa-Token</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="description" content="sa-token是一个java权限认证框架，功能全面，上手简单，登录验证、权限验证、Session会话、踢人下线、账号封禁、集成Redis、前后台分离、分布式会话、微服务网关鉴权、单点登录、记住我模式、模拟他人账号、临时身份切换、多账号体系、注解式鉴权、路由拦截式鉴权、花式token、自动续签、同端互斥登录、会话治理、密码加密、jwt集成、Spring集成、WebFlux集成...，有了sa-token，你所有的权限认证问题，都不再是问题">
+		<meta name="description" content="sa-token是一个java权限认证框架，功能全面，上手简单，登录验证、权限验证、Session会话、踢人下线、账号封禁、集成Redis、前后台分离、分布式会话、微服务网关鉴权、单点登录、OAuth2.0、临时Token验证、记住我模式、模拟他人账号、临时身份切换、多账号体系、注解式鉴权、路由拦截式鉴权、花式token、自动续签、同端互斥登录、会话治理、密码加密、jwt集成、Spring集成、WebFlux集成...，有了sa-token，你所有的权限认证问题，都不再是问题">
 		<meta name="keywords" content="sa-token,sa-token框架,sa-token文档,java权限认证">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 		<link rel="shortcut icon" type="image/x-icon" href="doc/logo.png">
@@ -46,7 +46,7 @@
 				<div class="content-box">
 					<div class="fenge"></div>
 					<!-- <img class="title-logo" src="./doc/logo.png" onclick="alert('别点我, 快去点star！')"> -->
-					<h1>Sa-Token<small>v1.19.0</small></h1>
+					<h1>Sa-Token<small>v1.24.0</small></h1>
 					<div class="sub-title"> 这可能是史上功能最全的java权限认证框架！</div>
 					<div class="btn-box">
 						<a href="https://github.com/dromara/sa-token" target="_blank">GitHub</a>
@@ -88,11 +88,11 @@
 						</div>
 						<div class="feature">
 							<h2>权限认证</h2>
-							<p>拦截违规调用，适配RBAC权限模型，不同角色不同授权，权限分配精细到按钮级</p>
+							<p>权限认证、角色认证、会话二级认证……适配RBAC权限模型，权限分配精细到按钮级</p>
 						</div>
 						<div class="feature">
 							<h2>Session会话</h2>
-							<p>专业的数据缓存中心，内置三种会话模型：User-Session、Token-Session、自定义Session</p>
+							<p>内置三种会话模型：全端共享Session、单端独享Session、自定义Session</p>
 						</div>
 						<div class="feature">
 							<h2>踢人下线</h2>
@@ -116,11 +116,23 @@
 						</div>
 						<div class="feature">
 							<h2>微服务网关鉴权</h2>
-							<p>适配Gateway、Soul、Zuul等常见网关组件的请求拦截认证</p>
+							<p>适配Gateway、ShenYu、Zuul等常见网关组件的请求拦截认证</p>
 						</div>
 						<div class="feature">
 							<h2>单点登录</h2>
-							<p>一行配置集成单点登录，多个系统，一处登录，处处通行</p>
+							<p>内置三种单点登录模式：无论是否跨域、是否共享Redis，都可以轻松搞定</p>
+						</div>
+						<div class="feature">
+							<h2>OAuth2.0</h2>
+							<p>基于RFC-6749标准编写，OAuth2.0标准流程的授权认证，支持openid模式 </p>
+						</div>
+						<div class="feature">
+							<h2>Alone独立Redis</h2>
+							<p>为Sa-Token单独配置一个Redis实例，将权限缓存与业务缓存分离 </p>
+						</div>
+						<div class="feature">
+							<h2>临时Token验证</h2>
+							<p>集成jwt临时验证模块，用于短时间的权限验证</p>
 						</div>
 						<div class="feature">
 							<h2>临时身份切换</h2>
@@ -130,10 +142,13 @@
 							<h2>同端互斥登录</h2>
 							<p>像QQ一样手机电脑可以同时在线，但是在两个手机上互斥登录</p>
 						</div>
-						
 						<div class="feature">
 							<h2>多账号体系认证</h2>
 							<p>例如一个商城项目的User表和Admin表分开鉴权，互不干扰，轻松搞定一个系统多套权限体系的场景！</p>
+						</div>
+						<div class="feature">
+							<h2>二级认证</h2>
+							<p>在已登录的会话上再次认证，保证安全性</p>
 						</div>
 						<div class="feature">
 							<h2>定制Token风格</h2>
@@ -141,7 +156,7 @@
 						</div>
 						<div class="feature">
 							<h2>注解式鉴权</h2>
-							<p>拒绝混乱，优雅的将鉴权与业务代码分离！</p>
+							<p>优雅的将鉴权与业务代码分离！</p>
 						</div>
 						<div class="feature">
 							<h2>路由拦截式鉴权</h2>
@@ -169,10 +184,10 @@
 						</div>
 						<div class="feature">
 							<h2>开箱即用</h2>
-							<p>提供SpringMVC、WebFlux等常见web框架的starter集成包，真正的开箱即用</p>
+							<p>提供SpringMVC、WebFlux、Solon等常见web框架的starter集成包，真正的开箱即用</p>
 						</div>
 					</div>
-					<div class="re-text">有了sa-token，你所有的权限认证问题，都不再是问题！</div>
+					<div class="re-text">有了Sa-Token，你所有的权限认证问题，都不再是问题！</div>
 				</div>
 			</div>
 			
@@ -223,6 +238,9 @@
 						<a href="https://budwk.com/" target="_blank">
 							<img src="https://oss.dev33.cn/sa-token/com/budwk.png">
 						</a>
+						<a href="https://www.quandashi.com/" target="_blank">
+							<img src="https://oss.dev33.cn/sa-token/com/quandashi.png">
+						</a>
 					</div>
 					<div style="height: 10px; clear: both;"></div>
 					<p style="color: #666;">
@@ -242,14 +260,17 @@
 					<br>
 					<h2 class="s-title">友情链接</h2>
 					<div class="com-box com-box-you">
-						<a href="https://gitee.com/dromara/soul" target="_blank">
-							<img src="https://oss.dev33.cn/sa-token/link/soul.png" msg="JAVA语言中可扩展，高性能，响应式的 API 网关">
+						<a href="https://gitee.com/Apache-ShenYu/incubator-shenyu" target="_blank">
+							<img src="https://oss.dev33.cn/sa-token/link/shenyu.png" msg="JAVA语言中可扩展，高性能，响应式的 API 网关">
 						</a>
 						<a href="https://gitee.com/dromara/TLog" target="_blank">
 							<img src="https://oss.dev33.cn/sa-token/link/tlog2.png" msg="一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪">
 						</a>
 						<a href="https://gitee.com/dromara/liteFlow" target="_blank">
 							<img src="https://oss.dev33.cn/sa-token/link/liteflow.png" msg="轻量，快速，稳定，可编排的组件式流程引擎">
+						</a>
+						<a href="https://hutool.cn/" target="_blank">
+							<img src="https://cdn.jsdelivr.net/gh/looly/hutool-site/images/logo.jpg" msg="🍬小而全的Java工具类库，使Java拥有函数式语言般的优雅，让Java语言也可以“甜甜的”。">
 						</a>
 						<a href="https://dromara.org/zh/projects/" target="_blank">
 							<img src="https://oss.dev33.cn/sa-token/link/dromara.png" msg="让每一位开源爱好者，体会到开源的快乐。">
@@ -275,6 +296,11 @@
 						<a href="https://jpom.io/" target="_blank">
 							<img src="https://oss.dev33.cn/sa-token/link/jpom.png" msg="一款简而轻的低侵入式在线构建、自动部署、日常运维、项目监控软件">
 						</a>
+						<a href="https://su.usthe.com/" target="_blank">
+							<img src="https://oss.dev33.cn/sa-token/link/sureness.png" msg="面向 REST API 的高性能认证鉴权框架">
+						</a>
+						
+						
 					</div>
 					<div style="height: 10px; clear: both;"></div>
 				</div>
@@ -327,7 +353,7 @@
 				</style>
 				<div class="foot-box" id="foot">
 					<div class="s-width" style="text-align: center;">
-						Copyright ©2021 sa-token java权限认证 | sa-token.dev33.cn | <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备18046274号-2</a>
+						Copyright ©2021 Sa-Token java权限认证 | sa-token.dev33.cn | <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备18046274号-2</a>
 					</div>
 				</div>
 			</div>

@@ -36,7 +36,7 @@ public class TestController {
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前登录账号：" + StpUtil.getLoginIdDefaultNull());
 		
-		StpUtil.setLoginId(id);			// 在当前会话登录此账号 	
+		StpUtil.login(id);			// 在当前会话登录此账号 	
 		System.out.println("登录成功");
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前登录账号：" + StpUtil.getLoginId());
@@ -107,9 +107,9 @@ public class TestController {
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前登录账号session的id" + StpUtil.getSession().getId());
 		System.out.println("当前登录账号session的id" + StpUtil.getSession().getId());
-		System.out.println("测试取值name：" + StpUtil.getSession().getAttribute("name"));
-		StpUtil.getSession().setAttribute("name", new Date());	// 写入一个值 
-		System.out.println("测试取值name：" + StpUtil.getSession().getAttribute("name"));
+		System.out.println("测试取值name：" + StpUtil.getSession().get("name"));
+		StpUtil.getSession().set("name", new Date());	// 写入一个值 
+		System.out.println("测试取值name：" + StpUtil.getSession().get("name"));
 		System.out.println( ONode.stringify(StpUtil.getSession()));
 		return AjaxJson.getSuccess();
 	}
@@ -120,10 +120,10 @@ public class TestController {
 		System.out.println("======================= 进入方法，测试自定义session接口 ========================= ");
 		// 自定义session就是无需登录也可以使用 的session ：比如拿用户的手机号当做 key， 来获取 session 
 		System.out.println("自定义 session的id为：" + SaSessionCustomUtil.getSessionById("1895544896").getId());
-		System.out.println("测试取值name：" + SaSessionCustomUtil.getSessionById("1895544896").getAttribute("name"));
-		SaSessionCustomUtil.getSessionById("1895544896").setAttribute("name", "张三");	// 写入值 
-		System.out.println("测试取值name：" + SaSessionCustomUtil.getSessionById("1895544896").getAttribute("name"));
-		System.out.println("测试取值name：" + SaSessionCustomUtil.getSessionById("1895544896").getAttribute("name"));
+		System.out.println("测试取值name：" + SaSessionCustomUtil.getSessionById("1895544896").get("name"));
+		SaSessionCustomUtil.getSessionById("1895544896").set("name", "张三");	// 写入值 
+		System.out.println("测试取值name：" + SaSessionCustomUtil.getSessionById("1895544896").get("name"));
+		System.out.println("测试取值name：" + SaSessionCustomUtil.getSessionById("1895544896").get("name"));
 		return AjaxJson.getSuccess();
 	}
 
@@ -135,9 +135,9 @@ public class TestController {
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前token专属session: " + StpUtil.getTokenSession().getId());
 
-		System.out.println("测试取值name：" + StpUtil.getTokenSession().getAttribute("name"));
-		StpUtil.getTokenSession().setAttribute("name", "张三");	// 写入一个值 
-		System.out.println("测试取值name：" + StpUtil.getTokenSession().getAttribute("name"));
+		System.out.println("测试取值name：" + StpUtil.getTokenSession().get("name"));
+		StpUtil.getTokenSession().set("name", "张三");	// 写入一个值 
+		System.out.println("测试取值name：" + StpUtil.getTokenSession().get("name"));
 		
 		return AjaxJson.getSuccess();
 	}
@@ -183,7 +183,7 @@ public class TestController {
 	@Mapping("kickOut")
 	public AjaxJson kickOut() {
 		// 先登录上 
-		StpUtil.setLoginId(10001);
+		StpUtil.login(10001);
 		// 踢下线 
 		StpUtil.logoutByLoginId(10001);
 		// 再尝试获取
@@ -195,7 +195,7 @@ public class TestController {
 	// 测试登录接口, 按照设备登录， 浏览器访问： http://localhost:8081/test/login2
 	@Mapping("login2")
 	public AjaxJson login2(@Param(defaultValue="10001") String id, @Param(defaultValue="PC") String device) {
-		StpUtil.setLoginId(id, device);
+		StpUtil.login(id, device);
 		return AjaxJson.getSuccess();
 	}
 	
@@ -230,7 +230,7 @@ public class TestController {
 	@Mapping("loginByDevice")
 	public AjaxJson loginByDevice() {
 		System.out.println("--------------");
-		StpUtil.setLoginId(10001, "PC");
+		StpUtil.login(10001, "PC");
 		return AjaxJson.getSuccessData("登录成功");
 	}
 

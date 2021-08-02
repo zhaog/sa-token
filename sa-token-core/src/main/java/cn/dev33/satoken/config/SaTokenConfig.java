@@ -1,20 +1,24 @@
 package cn.dev33.satoken.config;
 
+import java.io.Serializable;
+
 /**
- * sa-token 配置类 Model
+ * Sa-Token 配置类 Model
  * <p>
  * 你可以通过yml、properties、java代码等形式配置本类参数，具体请查阅官方文档: http://sa-token.dev33.cn/
  * 
  * @author kong
  *
  */
-public class SaTokenConfig {
+public class SaTokenConfig implements Serializable {
+
+	private static final long serialVersionUID = -6541180061782004705L;
 
 	/** token名称 (同时也是cookie名称) */
 	private String tokenName = "satoken";
 
 	/** token的长久有效期(单位:秒) 默认30天, -1代表永久 */
-	private long timeout = 30 * 24 * 60 * 60;
+	private long timeout = 60 * 60 * 24 * 30;
 
 	/**
 	 * token临时有效期 [指定时间内无操作就视为token过期] (单位: 秒), 默认-1 代表不限制
@@ -23,7 +27,7 @@ public class SaTokenConfig {
 	private long activityTimeout = -1;
 
 	/** 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录) */
-	private Boolean allowConcurrentLogin = true;
+	private Boolean isConcurrent = true;
 
 	/** 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token) */
 	private Boolean isShare = true;
@@ -56,11 +60,27 @@ public class SaTokenConfig {
 	private String tokenPrefix;
 
 	/** 是否在初始化配置时打印版本字符画 */
-	private Boolean isV = true;
+	private Boolean isPrint = true;
 
 	/** 是否打印操作日志 */
 	private Boolean isLog = false;
 
+	/**
+	 * jwt秘钥 (只有集成 sa-token-temp-jwt 模块时此参数才会生效) 
+	 */
+	private String jwtSecretKey;
+	
+	/**
+	 * Id-Token的有效期 (单位: 秒)
+	 */
+	private long idTokenTimeout = 60 * 60 * 24;
+	
+
+	/**
+	 * SSO单点登录配置对象 
+	 */
+	public SaSsoConfig sso = new SaSsoConfig();
+	
 
 	/**
 	 * @return token名称 (同时也是cookie名称)
@@ -113,18 +133,18 @@ public class SaTokenConfig {
 	}
 
 	/**
-	 * @return 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+	 * @return 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录) 
 	 */
-	public Boolean getAllowConcurrentLogin() {
-		return allowConcurrentLogin;
+	public Boolean getIsConcurrent() {
+		return isConcurrent;
 	}
 
 	/**
-	 * @param allowConcurrentLogin 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+	 * @param isConcurrent 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
 	 * @return 对象自身
 	 */
-	public SaTokenConfig setAllowConcurrentLogin(Boolean allowConcurrentLogin) {
-		this.allowConcurrentLogin = allowConcurrentLogin;
+	public SaTokenConfig setIsConcurrent(Boolean isConcurrent) {
+		this.isConcurrent = isConcurrent;
 		return this;
 	}
 
@@ -293,16 +313,16 @@ public class SaTokenConfig {
 	/**
 	 * @return 是否在初始化配置时打印版本字符画
 	 */
-	public Boolean getIsV() {
-		return isV;
+	public Boolean getIsPrint() {
+		return isPrint;
 	}
 
 	/**
-	 * @param isV 是否在初始化配置时打印版本字符画
+	 * @param isPrint 是否在初始化配置时打印版本字符画
 	 * @return 对象自身
 	 */
-	public SaTokenConfig setIsV(Boolean isV) {
-		this.isV = isV;
+	public SaTokenConfig setIsPrint(Boolean isPrint) {
+		this.isPrint = isPrint;
 		return this;
 	}
 
@@ -315,6 +335,7 @@ public class SaTokenConfig {
 
 	/**
 	 * @param isLog 是否打印操作日志
+	 * @return 对象自身
 	 */
 	public SaTokenConfig setIsLog(Boolean isLog) {
 		this.isLog = isLog;
@@ -322,19 +343,85 @@ public class SaTokenConfig {
 	}
 
 	/**
-	 * toString()
+	 * @return jwt秘钥 (只有集成 sa-token-temp-jwt 模块时此参数才会生效)  
 	 */
+	public String getJwtSecretKey() {
+		return jwtSecretKey;
+	}
+
+	/**
+	 * @param jwtSecretKey jwt秘钥 (只有集成 sa-token-temp-jwt 模块时此参数才会生效)  
+	 * @return 对象自身
+	 */
+	public SaTokenConfig setJwtSecretKey(String jwtSecretKey) {
+		this.jwtSecretKey = jwtSecretKey;
+		return this;
+	}
+
+	/**
+	 * @return Id-Token的有效期 (单位: 秒)
+	 */
+	public long getIdTokenTimeout() {
+		return idTokenTimeout;
+	}
+
+	/**
+	 * @param idTokenTimeout Id-Token的有效期 (单位: 秒)
+	 * @return 对象自身
+	 */
+	public SaTokenConfig setIdTokenTimeout(long idTokenTimeout) {
+		this.idTokenTimeout = idTokenTimeout;
+		return this;
+	}
+	
+	/**
+	 * @return SSO单点登录配置对象 
+	 */
+	public SaSsoConfig getSso() {
+		return sso;
+	}
+	
+	/**
+	 * @param sso SSO单点登录配置对象 
+	 */
+	public void setSso(SaSsoConfig sso) {
+		this.sso = sso;
+	}
+	
 	@Override
 	public String toString() {
 		return "SaTokenConfig [tokenName=" + tokenName + ", timeout=" + timeout + ", activityTimeout=" + activityTimeout
-				+ ", allowConcurrentLogin=" + allowConcurrentLogin + ", isShare=" + isShare + ", isReadBody="
-				+ isReadBody + ", isReadHead=" + isReadHead + ", isReadCookie=" + isReadCookie + ", tokenStyle="
-				+ tokenStyle + ", dataRefreshPeriod=" + dataRefreshPeriod + ", tokenSessionCheckLogin="
-				+ tokenSessionCheckLogin + ", autoRenew=" + autoRenew + ", cookieDomain=" + cookieDomain
-				+ ", tokenPrefix=" + tokenPrefix + ", isV=" + isV + ", isLog=" + isLog + "]";
+				+ ", isConcurrent=" + isConcurrent + ", isShare=" + isShare + ", isReadBody=" + isReadBody
+				+ ", isReadHead=" + isReadHead + ", isReadCookie=" + isReadCookie + ", tokenStyle=" + tokenStyle
+				+ ", dataRefreshPeriod=" + dataRefreshPeriod + ", tokenSessionCheckLogin=" + tokenSessionCheckLogin
+				+ ", autoRenew=" + autoRenew + ", cookieDomain=" + cookieDomain + ", tokenPrefix=" + tokenPrefix
+				+ ", isPrint=" + isPrint + ", isLog=" + isLog + ", jwtSecretKey=" + jwtSecretKey + ", idTokenTimeout="
+				+ idTokenTimeout + ", sso=" + sso + "]";
 	}
 	
 
 	
+	
+	/**
+	 * <h1> 本函数设计已过时，未来版本可能移除此函数，请及时更换为 setIsConcurrent() ，使用方式保持不变 </h1>
+	 * @param allowConcurrentLogin see note
+	 * @return  see note
+	 */
+	@Deprecated
+	public SaTokenConfig setAllowConcurrentLogin(Boolean allowConcurrentLogin) {
+		this.isConcurrent = allowConcurrentLogin;
+		return this;
+	}
+
+	/**
+	 * <h1> 本函数设计已过时，未来版本可能移除此函数，请及时更换为 setIsConcurrent() ，使用方式保持不变 </h1>
+	 * @param isV see note
+	 * @return see note
+	 */
+	public SaTokenConfig setIsV(Boolean isV) {
+		this.isPrint = isV;
+		return this;
+	}
+
 
 }

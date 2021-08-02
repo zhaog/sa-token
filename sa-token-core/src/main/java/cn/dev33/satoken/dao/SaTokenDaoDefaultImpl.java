@@ -10,7 +10,7 @@ import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
- * sa-token持久层默认的实现类 , 基于内存Map 
+ * Sa-Token持久层接口 [默认实现类, 基于内存Map] 
  * @author kong
  *
  */
@@ -45,6 +45,9 @@ public class SaTokenDaoDefaultImpl implements SaTokenDao {
 
 	@Override
 	public void set(String key, String value, long timeout) {
+		if(timeout == 0 || timeout <= SaTokenDao.NOT_VALUE_EXPIRE)  {
+			return;
+		}
 		dataMap.put(key, value);
 		expireMap.put(key, (timeout == SaTokenDao.NEVER_EXPIRE) ? (SaTokenDao.NEVER_EXPIRE) : (System.currentTimeMillis() + timeout * 1000));
 	}
@@ -84,6 +87,9 @@ public class SaTokenDaoDefaultImpl implements SaTokenDao {
 
 	@Override
 	public void setObject(String key, Object object, long timeout) {
+		if(timeout == 0 || timeout <= SaTokenDao.NOT_VALUE_EXPIRE)  {
+			return;
+		}
 		dataMap.put(key, object);
 		expireMap.put(key, (timeout == SaTokenDao.NEVER_EXPIRE) ? (SaTokenDao.NEVER_EXPIRE) : (System.currentTimeMillis() + timeout * 1000));
 	}

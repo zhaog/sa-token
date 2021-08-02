@@ -13,7 +13,7 @@
 
 
 ### 登录方法需要我自己实现吗？
-是的，不同于`shiro`等框架，`sa-token`不会在登录流程中强插一脚，开发者比对完用户的账号和密码之后，只需要调用`StpUtil.setLogin(id)`通知一下框架即可
+是的，不同于`shiro`等框架，`Sa-Token`不会在登录流程中强插一脚，开发者比对完用户的账号和密码之后，只需要调用`StpUtil.login(id)`通知一下框架即可
 
 
 ### 一个User对象存进Session后，再取出来时报错：无法从User类型转换成User类型？
@@ -33,12 +33,12 @@
 `SaRouter.match(Arrays.asList("/**"), Arrays.asList("/login", "/reg"), () -> StpUtil.checkLogin());`
 
 
-### 为什么StpUtil.setLoginId() 不能直接写入一个User对象？
-`StpUtil.setLoginId()`只是为了给当前会话做个唯一标记，通常写入`UserId`即可，如果要存储User对象，可以使用`StpUtil.getSession()`获取Session对象进行存储 
+### 为什么StpUtil.login() 不能直接写入一个User对象？
+`StpUtil.login()`只是为了给当前会话做个唯一标记，通常写入`UserId`即可，如果要存储User对象，可以使用`StpUtil.getSession()`获取Session对象进行存储 
 
 
 ### 前后台分离模式下和普通模式有何不同？
-主要是失去了`Cookie`无法自动化保存和提交`token秘钥`，可以参考章节：[前后台分离](/use/not-cookie)
+主要是失去了`Cookie`无法自动化保存和提交`token秘钥`，可以参考章节：[前后台分离](/up/not-cookie)
 
 
 ### 前后台分离时，前端提交的header参数是叫token还是satoken还是tokenName？
@@ -62,7 +62,7 @@
 
 
 ### 怎么关掉每次启动时的字符画打印？
-在配置文件将`isV`值配置为`false`
+在配置文件将`isPrint`值配置为`false`
 
 
 ### StpUtil.getSession()必须登录后才能调用吗？如果我想在用户未登录之前存储一些数据应该怎么办？
@@ -78,10 +78,22 @@
 框架内置 [强制指定账号下线] 的APi，在执行修改密码逻辑之后调用此API即可: `StpUtil.logout()`
 
 
+### 整合Redis时先选择了默认jdk序列化，后又改成jackson序列化，程序开始报错，SerializationException？
+两者的序列化算法不一致导致的反序列化失败，如果要更改序列化方式，则需要先将Redis中历史数据清除，再做更新 
+
+
+### 代码鉴权、注解鉴权、路由拦截鉴权，我该如何选择？
+这个问题没有标准答案，这里只能给你提供一些建议，从鉴权粒度的角度来看：
+1. 路由拦截鉴权：粒度最粗，只能粗略的拦截一个模块进行权限认证
+2. 注解鉴权：粒度较细，可以详细到方法级，比较灵活
+3. 代码鉴权：粒度最细，不光可以控制到方法级，甚至可以if语句决定是否鉴权
+
+So：从鉴权粒度的角度来看，需要针对一个模块鉴权的时候，就用路由拦截鉴权，需要控制到方法级的时候，就用注解鉴权，需要根据条件判断是否鉴权的时候，就用代码鉴权 
+
+
 ### 还是有不明白到的地方?
-请在`github`提交`issues`，或者加入qq群交流（群链接在[首页](README?id=交流群)）
+请在`gitee` 、 `github` 提交 `issues`，或者加入qq群交流（群链接在[首页](README?id=交流群)）
 
 
 ### 我能为这个框架贡献代码吗？
-**可以**，请参照首页的提交pr步骤 ，[贡献代码](README?id=贡献代码)
-
+**可以**，如果有好的想法，请直接提交pr步骤 

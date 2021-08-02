@@ -14,7 +14,7 @@ Sa-token默认将会话数据保存在内存中，此模式读写速度最快，
 <dependency>
 	<groupId>cn.dev33</groupId>
 	<artifactId>sa-token-dao-redis</artifactId>
-	<version>1.19.0</version>
+	<version>${sa.top.version}</version>
 </dependency>
 ```
 优点：兼容性好，缺点：Session序列化后基本不可读，对开发者来讲等同于乱码
@@ -26,7 +26,7 @@ Sa-token默认将会话数据保存在内存中，此模式读写速度最快，
 <dependency>
 	<groupId>cn.dev33</groupId>
 	<artifactId>sa-token-dao-redis-jackson</artifactId>
-	<version>1.19.0</version>
+	<version>${sa.top.version}</version>
 </dependency>
 ```
 优点：Session序列化后可读性强，可灵活手动修改，缺点：兼容性稍差
@@ -47,7 +47,7 @@ Sa-token默认将会话数据保存在内存中，此模式读写速度最快，
 ```
 
 **2. 引入了依赖，我还需要为Redis配置连接信息吗？** <br>
-需要！只有项目初始化了正确的Redis实例，`sa-token`才可以使用Redis进行数据持久化，参考以下`yml配置`：
+需要！只有项目初始化了正确的Redis实例，`Sa-Token`才可以使用Redis进行数据持久化，参考以下`yml配置`：
 ``` java
 # 端口
 spring: 

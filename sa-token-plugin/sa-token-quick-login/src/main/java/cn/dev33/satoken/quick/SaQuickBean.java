@@ -58,11 +58,11 @@ public class SaQuickBean implements WebMvcConfigurer  {
 	@Bean
 	@Order(SaTokenConsts.ASSEMBLY_ORDER - 1)
 	public SaServletFilter getSaServletFilter() {
-		return new SaServletFilter().
-
+		return new SaServletFilter()
 			// 拦截路由 & 放行路由
-			addInclude("/**").addExclude("/favicon.ico", "/saLogin", "/doLogin", "/sa-res/**").
-	
+			.addInclude(SaQuickManager.getConfig().getInclude().split(","))
+			.addExclude(SaQuickManager.getConfig().getExclude().split(","))
+			.addExclude("/favicon.ico", "/saLogin", "/doLogin", "/sa-res/**").
 			// 认证函数: 每次请求执行
 			setAuth(r -> {
 				// System.out.println("---------- 进入sa-token全局认证 -----------");
@@ -77,7 +77,7 @@ public class SaQuickBean implements WebMvcConfigurer  {
 						e.printStackTrace();
 					}
 					// 抛出异常，不再继续执行 
-					throw NotLoginException.newInstance(StpUtil.getLoginKey(), "");
+					throw NotLoginException.newInstance(StpUtil.getLoginType(), "");
 				}
 	
 			}).

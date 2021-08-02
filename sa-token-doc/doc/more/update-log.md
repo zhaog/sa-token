@@ -1,7 +1,65 @@
 # 更新日志 
 
+
+### 2021-7-24 @v1.24.0
+- 修复：修复部分场景下Alone-Redis插件导致项目无法启动的问题
+- 优化：增加对SpringBoot1.x版本的兼容性 
+- 新增：SaOAuth2Util新增checkScope函数，用于校验令牌是否具备指定权限 
+- 新增：OAuth2.0模块新增revoke接口，用于提前回收 Access-Token 令牌 
+- 新增：新增`Sa-Id-Token` 模块，解决微服务内部调用鉴权  **[重要]**
+- 文档：新增OAuth2.0模块常用方法说明  
+- 优化：大幅度优化文档示例 
+
+
+### 2021-7-19 @v1.23.0
+- 新增：Sa-Token-OAuth2 模块正式发布   **[重要]** 
+- 修复：修复jwt集成demo无法正确注册StpLogic的bug
+- 修复：修复登录时某些场景下Session续期可能不正常的bug  
+- 优化：代码注释优化，文档优化  
+
+
+### 2021-7-10 @v1.22.0
+- 新增：SaSsoConfig 部分属性增加set连缀风格 
+- 优化：SaSsoUtil 可定制化底层的 `StpLogic`
+- 新增：新增 `SaSsoHandle` 大幅度简化单点登录整合步骤  **[重要]** 
+- 新增：新增Sa-Token在线测评，链接：[https://ks.wjx.top/vj/wFKPziD.aspx](https://ks.wjx.top/vj/wFKPziD.aspx)  **[重要]**
+- 新增：Sa-Token-Quick-Login 插件新增拦截与放行路径配置
+- 优化：大幅度优化文档示例 
+
+
+### 2021-7-2 @v1.21.0
+- 新增：新增Token二级认证 	**[重要]** 
+- 新增：新增`Sa-Token-Alone-Redis`独立Redis插件   **[重要]**  
+- 新增：新增SSO三种模式，彻底解决所有场景下的单点登录问题   **[重要]**  
+- 新增：新增多账号模式下，注解合并示例		**[重要]**  
+- 新增：新增`SaRouter.back()`函数，用于停止匹配返回结果  
+- 不兼容更新重构：
+	- 更改yml配置前缀：原`[spring.sa-token.]` 改为 `[sa-token.]`，目前版本暂时向下兼容，请尽快更新 
+
+
+### 2021-6-17 @v1.20.0
+- 新增：新增Solon适配插件，感谢大佬 `@刘西东` 提供的pr **[重要]** 
+- 新增：新增`SaRouter.stop()`函数，用于一次性跳出匹配链功能 **[重要]** 
+- 新增：新增单元测试   **[重要]** 
+- 新增：新增临时令牌验证模块   **[重要]**  
+- 新增：新增`sa-token-temp-jwt`模块整合jwt临时令牌鉴权    **[重要]**  
+- 新增：会话 `SaSession.get()` 增加缓存API，简化代码 
+- 新增：新增框架调查问卷 
+- 修复：修复同时引入 `Spring Cloud Bus` 与 `Sa-Token` 冲突的问题   **[重要]** 
+- 修复：修复`SaServletFilter`异常函数中无法自定义`Content-Type`的问题 
+- 文档：新增微服务依赖引入说明 
+- 文档：新增认证流程图 
+- 不兼容更新重构：
+	- 方法：`StpUtil.setLoginId(id)` -> `StpUtil.login(id)` 
+	- 方法：`StpUtil.getLoginKey()` -> `StpUtil.getLoginType()` (注意其它所有地方的`LoginKey`均已更改为`loginType`)
+	- 工具类：`SaRouterUtil` -> `SaRouter` 
+	- 配置类：`allowConcurrentLogin` -> `isConcurrent` 
+	- 配置类：`isV` -> `isPrint` 
+	- 为保证平滑更新，旧API仍旧保留，但已增加`@Deprecated`注解，请尽快更新至新API  
+
+
 ### 2021-5-10 @v1.19.0
-- 新增：注解鉴权新增定制loginKey功能  **[重要]** 
+- 新增：注解鉴权新增定制loginType功能  **[重要]** 
 - 重构：重构目录结构，抽离`plugin`模块  **[重要]** 
 - 新增：新增 `sa-token-quick-login` 插件，零代码集成登录功能  **[重要]** 
 - 优化：所有函数式接口增加`@FunctionalInterface`注解，感谢群友`@MrXionGe`提供的建议 
@@ -38,7 +96,7 @@
 - 新增：新增基于`ThreadLocal`的上下文容器					**[重要]**
 - 新增：新增`Reactor`响应式编程支持，`WebFlux`集成！			**[重要]** 
 - 新增：新增全局过滤器，解决拦截器无法拦截静态资源的问题			**[重要]** 
-- 新增：新增微服务网关鉴权方案！可接入`Soul`、`Gateway`等网关组件!	**[重要]** 
+- 新增：新增微服务网关鉴权方案！可接入`ShenYu`、`Gateway`等网关组件!	**[重要]** 
 - 新增：AOP切面定义`Order`顺序为`-100`，可保证在多个自定义切面前执行 
 - 文档：新增推荐公众号列表 
 
@@ -65,7 +123,7 @@
 
 ### 2021-3-12 @v1.14.0
 - 新增：新增`SaLoginModel`登录参数Model，适配 [记住我] 模式	 **[重要]**
-- 新增：新增 `StpUtil.setLoginId()` 时指定token有效期，可灵活控制用户的一次登录免验证时长 
+- 新增：新增 `StpUtil.login()` 时指定token有效期，可灵活控制用户的一次登录免验证时长 
 - 新增：新增Cookie时间判断，在`timeout`设置为-1时，`Cookie`有效期将为`Integer.MAX_VALUE`	 **[重要]**
 - 新增：新增密码加密工具类，可快速MD5、SHA1、SHA256、AES、RSA加密 	**[重要]**
 - 新增：新增 OAuth2.0 模块  	**[重要]** 
@@ -182,7 +240,7 @@
 ### 2020-5-2 @v1.3.0
 - 新增：新增 `StpUtil.checkLogin()` 方法，更符合语义化的鉴权方法
 - 新增：注册拦截器时可设置 `StpLogic` ，方便不同模块不同鉴权方式
-- 新增：抛出异常时增加 `loginKey` 区分，方便多账号体系鉴权处理 
+- 新增：抛出异常时增加 `loginType` 区分，方便多账号体系鉴权处理 
 - 修复：修复启动时的版本字符画版本号打印不对的bug  
 - 修复：修复文档部分不正确之处
 - 新增：新增文档的友情链接

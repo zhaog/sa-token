@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
- * sa-token持久层的实现类, 基于redis 
+ * Sa-Token持久层接口 [Redis版 (使用JDK默认序列化方式)] 
  * 
  * @author kong
  *
@@ -27,18 +27,27 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	/**
 	 * String专用 
 	 */
-	@Autowired
 	public StringRedisTemplate stringRedisTemplate;	
 
 	/**
 	 * Objecy专用 
 	 */
 	public RedisTemplate<String, Object> objectRedisTemplate;
+
+	/**
+	 * 标记：是否已初始化成功
+	 */
+	public boolean isInit;
+	
 	@Autowired
-	public void setObjectRedisTemplate(RedisConnectionFactory connectionFactory) {
+	public void init(RedisConnectionFactory connectionFactory) {
 		// 指定相应的序列化方案 
 		StringRedisSerializer keySerializer = new StringRedisSerializer();
 		JdkSerializationRedisSerializer valueSerializer = new JdkSerializationRedisSerializer();
+		// 构建StringRedisTemplate
+		StringRedisTemplate stringTemplate = new StringRedisTemplate();
+		stringTemplate.setConnectionFactory(connectionFactory);
+		stringTemplate.afterPropertiesSet();
 		// 构建RedisTemplate
 		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
 		template.setConnectionFactory(connectionFactory);
@@ -47,14 +56,18 @@ public class SaTokenDaoRedis implements SaTokenDao {
 		template.setValueSerializer(valueSerializer);
 		template.setHashValueSerializer(valueSerializer);
 		template.afterPropertiesSet();
-		if(this.objectRedisTemplate == null) {
+
+		// 开始初始化相关组件 
+		if(this.isInit == false) {
+			this.stringRedisTemplate = stringTemplate;
 			this.objectRedisTemplate = template;
+			this.isInit = true;
 		}
 	}
 	
 	
 	/**
-	 * 根据key获取value，如果没有，则返回空 
+	 * 获取Value，如无返空 
 	 */
 	@Override
 	public String get(String key) {
@@ -62,10 +75,13 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 写入指定key-value键值对，并设定过期时间(单位：秒)
+	 * 写入Value，并设定存活时间 (单位: 秒)
 	 */
 	@Override
 	public void set(String key, String value, long timeout) {
+		if(timeout == 0 || timeout <= SaTokenDao.NOT_VALUE_EXPIRE)  {
+			return;
+		}
 		// 判断是否为永不过期 
 		if(timeout == SaTokenDao.NEVER_EXPIRE) {
 			stringRedisTemplate.opsForValue().set(key, value);
@@ -88,7 +104,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 	
 	/**
-	 * 删除一个指定的key
+	 * 删除Value 
 	 */
 	@Override
 	public void delete(String key) {
@@ -96,7 +112,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 根据key获取value，如果没有，则返回空 
+	 * 获取Value的剩余存活时间 (单位: 秒) 
 	 */
 	@Override
 	public long getTimeout(String key) {
@@ -104,7 +120,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 修改指定key的剩余存活时间 (单位: 秒) 
+	 * 修改Value的剩余存活时间 (单位: 秒) 
 	 */
 	@Override
 	public void updateTimeout(String key, long timeout) {
@@ -124,7 +140,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	
 	
 	/**
-	 * 根据key获取Object，如果没有，则返回空 
+	 * 获取Object，如无返空 
 	 */
 	@Override
 	public Object getObject(String key) {
@@ -132,10 +148,13 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 写入指定键值对，并设定过期时间 (单位: 秒)
+	 * 写入Object，并设定存活时间 (单位: 秒) 
 	 */
 	@Override
 	public void setObject(String key, Object object, long timeout) {
+		if(timeout == 0 || timeout <= SaTokenDao.NOT_VALUE_EXPIRE)  {
+			return;
+		}
 		// 判断是否为永不过期 
 		if(timeout == SaTokenDao.NEVER_EXPIRE) {
 			objectRedisTemplate.opsForValue().set(key, object);
@@ -145,7 +164,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 修改指定键值对 (过期时间不变)
+	 * 更新Object (过期时间不变) 
 	 */
 	@Override
 	public void updateObject(String key, Object object) {
@@ -158,7 +177,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 删除一个指定的object 
+	 * 删除Object 
 	 */
 	@Override
 	public void deleteObject(String key) {
@@ -166,7 +185,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 获取指定key的剩余存活时间 (单位: 秒)
+	 * 获取Object的剩余存活时间 (单位: 秒)
 	 */
 	@Override
 	public long getObjectTimeout(String key) {
@@ -174,7 +193,7 @@ public class SaTokenDaoRedis implements SaTokenDao {
 	}
 
 	/**
-	 * 修改指定key的剩余存活时间 (单位: 秒)
+	 * 修改Object的剩余存活时间 (单位: 秒)
 	 */
 	@Override
 	public void updateObjectTimeout(String key, long timeout) {

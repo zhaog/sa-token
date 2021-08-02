@@ -11,17 +11,18 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.0.0.RELEASE</version>
+		<!-- <version>1.5.9.RELEASE</version> -->
 		<relativePath/>
 	</parent>
 	
 	<!-- 定义sa-token版本号 -->
 	<properties>
-		<sa-token-version>1.19.0</sa-token-version>
+		<sa-token-version>1.24.0</sa-token-version>
 	</properties>
 
 	<dependencies>
 
-		<!-- springboot依赖 -->
+		<!-- SpringBoot依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -37,28 +38,28 @@
             <artifactId>sa-token-spring-boot-starter</artifactId>
             <version>${sa-token-version}</version>
         </dependency>
-		
-		<!-- sa-token整合redis (使用jdk默认序列化方式) -->
+        
+		<!-- Sa-Token 整合  Redis (使用jdk默认序列化方式) -->
 		<!-- <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-dao-redis</artifactId>
             <version>${sa-token-version}</version>
         </dependency> -->
 		
-		<!-- sa-token整合redis (使用jackson序列化方式) -->
+		<!-- Sa-Token整合 Redis (使用jackson序列化方式) -->
 		<!-- <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-dao-redis-jackson</artifactId>
             <version>${sa-token-version}</version>
         </dependency> -->
         
-		<!-- 提供redis连接池 -->
+		<!-- 提供Redis连接池 -->
 		<!-- <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency> -->
         
-		<!-- sa-token整合SpringAOP实现注解鉴权 -->
+		<!-- Sa-Token整合SpringAOP实现注解鉴权 -->
 		<!-- <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-aop</artifactId>
@@ -79,7 +80,6 @@
 		     <version>5.5.4</version>
 		</dependency> -->
 		
-
 	</dependencies>
 	
 	

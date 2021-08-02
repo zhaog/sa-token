@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.fun.SaRetFunction;
+import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
  * Session Model
@@ -35,7 +36,11 @@ public class SaSession implements Serializable {
 	 * 构建一个Session对象
 	 */
 	public SaSession() {
-		this(null);
+		/*
+		 * 当Session从Redis中反序列化取出时，框架会误以为创建了新的Session，
+		 * 因此此处不可以调用this(null); 避免监听器收到错误的通知 
+		 */
+		// this(null);
 	}
 
 	/**
@@ -144,100 +149,6 @@ public class SaSession implements Serializable {
 		if (tokenSignList.remove(tokenSign)) {
 			update();
 		}
-	}
-
-	// ----------------------- 存取值
-
-	/**
-	 * 写入一个值
-	 *
-	 * @param key   名称
-	 * @param value 值
-	 */
-	public void setAttribute(String key, Object value) {
-		dataMap.put(key, value);
-		update();
-	}
-
-	/**
-	 * 取出一个值
-	 *
-	 * @param key 名称
-	 * @return 值
-	 */
-	public Object getAttribute(String key) {
-		return dataMap.get(key);
-	}
-
-	/**
-	 * 取值，并指定取不到值时的默认值
-	 *
-	 * @param key          名称
-	 * @param defaultValue 取不到值的时候返回的默认值
-	 * @return value
-	 */
-	public Object getAttribute(String key, Object defaultValue) {
-		Object value = getAttribute(key);
-		if (value != null) {
-			return value;
-		}
-		return defaultValue;
-	}
-
-	/**
-	 * 移除一个值
-	 *
-	 * @param key 要移除的值的名字
-	 */
-	public void removeAttribute(String key) {
-		dataMap.remove(key);
-		update();
-	}
-
-	/**
-	 * 清空所有值
-	 */
-	public void clearAttribute() {
-		dataMap.clear();
-		update();
-	}
-
-	/**
-	 * 是否含有指定key
-	 *
-	 * @param key 是否含有指定值
-	 * @return 是否含有
-	 */
-	public boolean containsAttribute(String key) {
-		return dataMap.containsKey(key);
-	}
-
-	/**
-	 * 返回当前session会话所有key
-	 *
-	 * @return 所有值的key列表
-	 */
-	public Set<String> attributeKeys() {
-		return dataMap.keySet();
-	}
-
-	/**
-	 * 获取数据挂载集合（如果更新map里的值，请调用session.update()方法避免产生脏数据 ）
-	 *
-	 * @return 返回底层储存值的map对象
-	 */
-	public Map<String, Object> getDataMap() {
-		return dataMap;
-	}
-
-	/**
-	 * 写入数据集合 (不改变底层对象，只将此dataMap所有数据进行替换) 
-	 * @param dataMap 数据集合 
-	 */
-	public void refreshDataMap(Map<String, Object> dataMap) {
-		this.dataMap.clear();
-		this.dataMap.putAll(dataMap);
-		this.update();
 	}
 
 	
@@ -401,7 +312,7 @@ public class SaSession implements Serializable {
 	 * @return 值 
 	 */
 	public <T> T getModel(String key, Class<T> cs) {
-		return getValueByClass(get(key), cs);
+		return SaFoxUtil.getValueByType(get(key), cs);
 	}
 
 	/**
@@ -418,9 +329,18 @@ public class SaSession implements Serializable {
 		if(valueIsNull(value)) {
 			return (T)defaultValue;
 		}
-		return getValueByClass(value, cs);
+		return SaFoxUtil.getValueByType(value, cs);
 	}
 
+	/**
+	 * 返回当前Session的所有key 
+	 *
+	 * @return 所有值的key列表
+	 */
+	public Set<String> keys() {
+		return dataMap.keySet();
+	}
+	
 	// ---- 其他
 	/**
 	 * 写值
@@ -467,7 +387,34 @@ public class SaSession implements Serializable {
 		update();
 		return this;
 	}
-	
+
+	/**
+	 * 清空所有值
+	 */
+	public void clear() {
+		dataMap.clear();
+		update();
+	}
+
+	/**
+	 * 获取数据挂载集合（如果更新map里的值，请调用session.update()方法避免产生脏数据 ）
+	 *
+	 * @return 返回底层储存值的map对象
+	 */
+	public Map<String, Object> getDataMap() {
+		return dataMap;
+	}
+
+	/**
+	 * 写入数据集合 (不改变底层对象，只将此dataMap所有数据进行替换) 
+	 * @param dataMap 数据集合 
+	 */
+	public void refreshDataMap(Map<String, Object> dataMap) {
+		this.dataMap.clear();
+		this.dataMap.putAll(dataMap);
+		this.update();
+	}
+
 	
 	// --------- 工具方法 
 
@@ -480,44 +427,6 @@ public class SaSession implements Serializable {
 		return value == null || value.equals("");
 	}
 
-	/**
-	 * 将指定值转化为指定类型
-	 * @param <T> 泛型
-	 * @param obj 值
-	 * @param cs 类型
-	 * @return 转换后的值 
-	 */
-	@SuppressWarnings("unchecked")
-	protected <T> T getValueByClass(Object obj, Class<T> cs) {
-		// 如果 obj 本来就是 cs 类型 
-		if(obj != null && obj.getClass().equals(cs)) {
-			return (T)obj;
-		}
-		// 开始转换
-		String obj2 = String.valueOf(obj);
-		Object obj3 = null;
-		if (cs.equals(String.class)) {
-			obj3 = obj2;
-		} else if (cs.equals(int.class) || cs.equals(Integer.class)) {
-			obj3 = Integer.valueOf(obj2);
-		} else if (cs.equals(long.class) || cs.equals(Long.class)) {
-			obj3 = Long.valueOf(obj2);
-		} else if (cs.equals(short.class) || cs.equals(Short.class)) {
-			obj3 = Short.valueOf(obj2);
-		} else if (cs.equals(byte.class) || cs.equals(Byte.class)) {
-			obj3 = Byte.valueOf(obj2);
-		} else if (cs.equals(float.class) || cs.equals(Float.class)) {
-			obj3 = Float.valueOf(obj2);
-		} else if (cs.equals(double.class) || cs.equals(Double.class)) {
-			obj3 = Double.valueOf(obj2);
-		} else if (cs.equals(boolean.class) || cs.equals(Boolean.class)) {
-			obj3 = Boolean.valueOf(obj2);
-		} else {
-			obj3 = (T)obj;
-		}
-		return (T)obj3;
-	}
-	
 	/**
 	 * 根据默认值来获取值
 	 * @param <T> 泛型
@@ -535,9 +444,101 @@ public class SaSession implements Serializable {
 		
 		// 开始转换
 		Class<T> cs = (Class<T>) defaultValue.getClass();
-		return getValueByClass(value, cs);
+		return SaFoxUtil.getValueByType(value, cs);
 	}
 	
+	
+	
+
+	// ----------------------- 旧API 
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.set(key) </h1>
+	 * 写入一个值
+	 *
+	 * @param key   名称
+	 * @param value 值
+	 */
+	@Deprecated
+	public void setAttribute(String key, Object value) {
+		dataMap.put(key, value);
+		update();
+	}
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.get(key) </h1>
+	 * 取出一个值
+	 *
+	 * @param key 名称
+	 * @return 值
+	 */
+	@Deprecated
+	public Object getAttribute(String key) {
+		return dataMap.get(key);
+	}
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.get(key, defaultValue) </h1>
+	 * 取值，并指定取不到值时的默认值
+	 *
+	 * @param key          名称
+	 * @param defaultValue 取不到值的时候返回的默认值
+	 * @return value
+	 */
+	@Deprecated
+	public Object getAttribute(String key, Object defaultValue) {
+		Object value = getAttribute(key);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.delete(key) </h1>
+	 * 移除一个值
+	 *
+	 * @param key 要移除的值的名字
+	 */
+	@Deprecated
+	public void removeAttribute(String key) {
+		dataMap.remove(key);
+		update();
+	}
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.clear() </h1>
+	 * 清空所有值
+	 */
+	@Deprecated
+	public void clearAttribute() {
+		dataMap.clear();
+		update();
+	}
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.has(key) </h1>
+	 * 是否含有指定key
+	 *
+	 * @param key 是否含有指定值
+	 * @return 是否含有
+	 */
+	@Deprecated
+	public boolean containsAttribute(String key) {
+		return dataMap.containsKey(key);
+	}
+
+	/**
+	 * <h1> 此函数设计已过时，未来版本可能移除此类，请及时更换为: session.keys() </h1>
+	 * 返回当前session会话所有key
+	 *
+	 * @return 所有值的key列表
+	 */
+	@Deprecated
+	public Set<String> attributeKeys() {
+		return dataMap.keySet();
+	}
+
 	
 	
 }

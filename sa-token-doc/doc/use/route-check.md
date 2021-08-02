@@ -1,11 +1,11 @@
-# 路由拦截式鉴权
+# 路由拦截鉴权
 --- 
 
 假设我们有如下需求：
 > 项目中所有接口均需要登录验证，只有'登录接口'本身对外开放
 
 我们怎么实现呢？给每个接口加上鉴权注解？手写全局拦截器？似乎都不是非常方便。<br/>
-在这个需求中我们真正需要的是一种基于路由拦截的鉴权模式, 那么在sa-token怎么实现路由拦截鉴权呢？
+在这个需求中我们真正需要的是一种基于路由拦截的鉴权模式, 那么在Sa-Token怎么实现路由拦截鉴权呢？
 
 
 
@@ -14,10 +14,10 @@
 ``` java 
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
-	// 注册sa-token的登录拦截器
+	// 注册拦截器
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		// 注册登录拦截器，并排除登录接口或其他可匿名访问的接口地址 (与注解拦截器无关)
+		// 注册Sa-Token的路由拦截器，并排除登录接口或其他可匿名访问的接口地址 (与注解拦截器无关)
 		registry.addInterceptor(new SaRouteInterceptor()).addPathPatterns("/**").excludePathPatterns("/user/doLogin"); 
 	}
 }
@@ -54,7 +54,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 ``` java 
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
-	// 注册sa-token的拦截器
+	// 注册Sa-Token的拦截器
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// 注册路由拦截器，自定义验证规则 
@@ -87,9 +87,8 @@ public class SaTokenConfigure implements WebMvcConfigurer {
 				}
 			});
 			
-			// 提前退出 
-			
-			
+			// 提前退出 (执行SaRouter.stop()后会直接退出匹配链)
+			SaRouter.match("/test/back", () -> SaRouter.stop());
 			
 			// 在多账号模式下，可以使用任意StpUtil进行校验
 			SaRouter.match("/user/**", () -> StpUserUtil.checkLogin());
@@ -115,6 +114,13 @@ registry.addInterceptor(new SaRouteInterceptor((req, res, handler) -> {
 })).addPathPatterns("/**");
 ```
 如上示例，代码运行至第2条匹配链时，会在stop函数处提前退出整个匹配函数，从而忽略掉剩余的所有match匹配 
+
+除了`stop()`函数，`SaRouter`还提供了 `SaRouter.back()` 函数，用于：停止匹配，结束执行，直接向前端返回结果
+``` java
+SaRouter.match("/user/back", () -> SaRouter.back("执行back函数后将停止匹配，也不会进入Controller，而是直接将此参数作为返回值输出到前端"));
+```
+
+
 
 
 

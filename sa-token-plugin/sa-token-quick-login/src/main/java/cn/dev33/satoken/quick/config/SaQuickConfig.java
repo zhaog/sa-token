@@ -26,7 +26,12 @@ public class SaQuickConfig {
 	/** 是否显示底部版权信息 */
 	private Boolean copr = true;
 
-	
+	/** 配置拦截的路径，逗号分隔 */
+	private String include = "/**";
+
+	/** 配置拦截的路径，逗号分隔 */
+	private String exclude = "";
+
 	public Boolean getAuth() {
 		return auth;
 	}
@@ -75,16 +80,34 @@ public class SaQuickConfig {
 		this.copr = copr;
 	}
 
+	public String getInclude() {
+		return include;
+	}
+
+	public void setInclude(String include) {
+		this.include = include;
+	}
+
+	public String getExclude() {
+		return exclude;
+	}
+
+	public void setExclude(String exclude) {
+		this.exclude = exclude;
+	}
+	
 	
 	@Override
 	public String toString() {
-		return "SaQuickConfig [auth=" + auth + ", name=" + name + ", pwd=" + pwd + ", auto=" + auto + ", title=" + title
-				+ ", copr=" + copr + "]";
+		return "SaQuickConfig{" +
+				"auth=" + auth +
+				", name='" + name + '\'' +
+				", pwd='" + pwd + '\'' +
+				", auto=" + auto +
+				", title='" + title + '\'' +
+				", copr=" + copr +
+				", include='" + include + '\'' +
+				", exclude='" + exclude + '\'' +
+				'}';
 	}
-
-	
-	
-	
-	
-	
 }

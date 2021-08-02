@@ -1,5 +1,7 @@
 package cn.dev33.satoken.oauth2.model;
 
+import java.io.Serializable;
+
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.util.SaFoxUtil;
 
@@ -8,37 +10,39 @@ import cn.dev33.satoken.util.SaFoxUtil;
  * @author kong
  *
  */
-public class RequestAuthModel {
+public class RequestAuthModel implements Serializable {
+
+	private static final long serialVersionUID = -6541180061782004705L;
 
 	/**
 	 * 应用id 
 	 */
-	private String clientId;
+	public String clientId;
 	 
 	/**
 	 * 授权范围
 	 */
-	private String scope;
+	public String scope;
 	
 	/**
 	 * 对应的账号id 
 	 */
-	private Object loginId;
+	public Object loginId;
 	
 	/**
 	 * 待重定向URL
 	 */
-	private String redirectUri; 
+	public String redirectUri; 
 	
 	/**
 	 * 授权类型, 非必填 
 	 */
-	private String responseType;
+	public String responseType;
 
 	/**
 	 * 状态标识, 可为null 
 	 */
-	private String state;
+	public String state;
 
 	
 	/**
@@ -156,5 +160,6 @@ public class RequestAuthModel {
 		}
 		return this;
 	}
+
 	
 }

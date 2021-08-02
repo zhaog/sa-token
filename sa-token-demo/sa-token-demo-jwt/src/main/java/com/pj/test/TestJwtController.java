@@ -32,7 +32,7 @@ public class TestJwtController {
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前登录账号：" + StpUtil.getLoginIdDefaultNull());
 		
-		StpUtil.setLoginId(id);			// 在当前会话登录此账号 	
+		StpUtil.login(id);			// 在当前会话登录此账号 	
 		System.out.println("登录成功");
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前登录账号：" + StpUtil.getLoginId());
@@ -60,9 +60,9 @@ public class TestJwtController {
 		System.out.println("当前是否登录：" + StpUtil.isLogin());
 		System.out.println("当前登录账号session的id" + StpUtil.getSession().getId());
 		System.out.println("当前登录账号session的id" + StpUtil.getSession().getId());
-		System.out.println("测试取值name：" + StpUtil.getSession().getAttribute("name"));
-		StpUtil.getSession().setAttribute("name", new Date());	// 写入一个值 
-		System.out.println("测试取值name：" + StpUtil.getSession().getAttribute("name"));
+		System.out.println("测试取值name：" + StpUtil.getSession().get("name"));
+		StpUtil.getSession().set("name", new Date());	// 写入一个值 
+		System.out.println("测试取值name：" + StpUtil.getSession().get("name"));
 		System.out.println( new ObjectMapper().writeValueAsString(StpUtil.getSession()));
 		return AjaxJson.getSuccess();
 	}
@@ -73,7 +73,7 @@ public class TestJwtController {
 	public AjaxJson test() {
 		System.out.println();
 		System.out.println("--------------进入请求--------------");
-		StpUtil.setLoginId(10001);	
+		StpUtil.login(10001);	
 		System.out.println(StpUtil.getTokenInfo().getTokenValue());
 		return AjaxJson.getSuccess();
 	}

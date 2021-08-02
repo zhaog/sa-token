@@ -1,7 +1,7 @@
 # 踢人下线
 所谓踢人下线，核心操作就是找到其指定`loginId`对应的`token`，并设置其失效
 
-![踢下线](../static/kickout.png)
+![踢下线](https://oss.dev33.cn/sa-token/doc/kickout.png)
 
 --- 
 
@@ -51,6 +51,6 @@ StpUtil.untieDisable(10001);
 // 先踢下线
 StpUtil.logoutByLoginId(10001); 
 // 再封禁账号
-StpUtil.disableLoginId(10001, 86400); 
+StpUtil.disable(10001, 86400); 
 ```
 
