@@ -37,11 +37,15 @@ cd sa-token-demo-alone-redis
 call mvn clean
 cd ..
 
-cd sa-token-demo-sso1
+cd sa-token-demo-thymeleaf
 call mvn clean
 cd ..
 
-cd sa-token-demo-sso2-server
+cd sa-token-demo-sso-server
+call mvn clean
+cd ..
+
+cd sa-token-demo-sso1-client
 call mvn clean
 cd ..
 
@@ -49,11 +53,24 @@ cd sa-token-demo-sso2-client
 call mvn clean
 cd ..
 
-cd sa-token-demo-sso3-server
+cd sa-token-demo-sso3-client
 call mvn clean
 cd ..
 
-cd sa-token-demo-sso3-client
+cd sa-token-demo-jwt
+call mvn clean
+cd ..
+
+cd sa-token-demo-jwt
+call mvn clean
+cd ..
+
+
+cd sa-token-demo-dubbo-provider
+call mvn clean
+cd ..
+
+cd sa-token-demo-dubbo-consumer
 call mvn clean
 cd ..
 

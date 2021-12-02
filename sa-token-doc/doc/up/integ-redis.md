@@ -13,7 +13,7 @@ Sa-token默认将数据保存在内存中，此模式读写速度最快，且避
 
 ---
 
-### 1. Sa-Token 整合 Redis （使用jdk默认序列化方式）
+### 方式1. Sa-Token 整合 Redis （使用jdk默认序列化方式）
 ``` xml 
 <!-- Sa-Token 整合 Redis （使用jdk默认序列化方式） -->
 <dependency>
@@ -25,7 +25,7 @@ Sa-token默认将数据保存在内存中，此模式读写速度最快，且避
 优点：兼容性好，缺点：Session序列化后基本不可读，对开发者来讲等同于乱码
 
 
-### 2. Sa-Token 整合 Redis（使用jackson序列化方式）
+### 方式2. Sa-Token 整合 Redis（使用jackson序列化方式）
 ``` xml 
 <!-- Sa-Token 整合 Redis （使用jackson序列化方式） -->
 <dependency>
@@ -64,8 +64,8 @@ spring:
         port: 6379
         # Redis服务器连接密码（默认为空）
         # password: 
-        # 连接超时时间（毫秒）
-        timeout: 1000ms
+        # 连接超时时间
+        timeout: 10s
         lettuce:
             pool:
                 # 连接池最大连接数
@@ -82,9 +82,11 @@ spring:
 **3. 集成Redis后，是我额外手动保存数据，还是框架自动保存？** <br>
 框架自动保存。集成`Redis`只需要引入对应的`pom依赖`即可，框架所有上层API保持不变
 
+**4. 集成包版本问题** <br>
+Sa-Token-Redis 集成包的版本尽量与 Sa-Token-Starter 集成包的版本一致，否则可能出现兼容性问题
+
 
 <br><br>
-更多框架的集成方案正在更新中... (欢迎大家提交pr)
-
+更多框架的集成方案正在更新中...
 
 

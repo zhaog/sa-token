@@ -1,6 +1,6 @@
 # Spring WebFlux 集成 Sa-Token 示例
 
-**Reactor** 是一种非阻塞的响应式模型，本篇将 **WebFlux** 以为例，展示 Sa-Token 与 Reactor 响应式模型架相整合的示例，
+**Reactor** 是一种非阻塞的响应式模型，本篇将以 **WebFlux** 为例，展示 Sa-Token 与 Reactor 响应式模型框架相整合的示例，
 **你可以用同样方式去对接其它Reactor模型框架（Netty、ShenYu、SpringCloud Gateway等）**
 
 整合示例在官方仓库的`/sa-token-demo/sa-token-demo-webflux`文件夹下，如遇到难点可结合源码进行测试学习
@@ -58,7 +58,7 @@ public class SaTokenConfigure {
         		// 指定 [放行路由]
         		.addExclude("/favicon.ico")
         		// 指定[认证函数]: 每次请求执行 
-        		.setAuth(r -> {
+        		.setAuth(obj -> {
         			System.out.println("---------- sa全局认证");
                     // SaRouter.match("/test/test", () -> StpUtil.checkLogin());
         		})
@@ -93,7 +93,7 @@ public class UserController {
 
 	// 查询登录状态，浏览器访问： http://localhost:8081/user/isLogin
 	@RequestMapping("isLogin")
-	public String isLogin(String username, String password) {
+	public String isLogin() {
 		return "当前会话是否登录：" + StpUtil.isLogin();
 	}
 	

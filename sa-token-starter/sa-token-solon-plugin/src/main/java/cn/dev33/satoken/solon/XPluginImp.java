@@ -7,11 +7,15 @@ import org.noear.solon.core.Plugin;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.action.SaTokenAction;
+import cn.dev33.satoken.annotation.SaCheckBasic;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaCheckSafe;
+import cn.dev33.satoken.basic.SaBasicTemplate;
+import cn.dev33.satoken.basic.SaBasicUtil;
 import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.context.second.SaTokenSecondContextCreator;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.id.SaIdTemplate;
 import cn.dev33.satoken.id.SaIdUtil;
@@ -21,12 +25,15 @@ import cn.dev33.satoken.solon.integration.SaTokenMethodInterceptor;
 import cn.dev33.satoken.sso.SaSsoTemplate;
 import cn.dev33.satoken.sso.SaSsoUtil;
 import cn.dev33.satoken.stp.StpInterface;
+import cn.dev33.satoken.stp.StpLogic;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.temp.SaTempInterface;
 
 /**
  * @author noear
  * @since 1.4
  */
+@SuppressWarnings("deprecation")
 public class XPluginImp implements Plugin {
     
 	@Override
@@ -35,6 +42,7 @@ public class XPluginImp implements Plugin {
         Aop.context().beanAroundAdd(SaCheckRole.class, SaTokenMethodInterceptor.INSTANCE);
         Aop.context().beanAroundAdd(SaCheckLogin.class, SaTokenMethodInterceptor.INSTANCE);
         Aop.context().beanAroundAdd(SaCheckSafe.class, SaTokenMethodInterceptor.INSTANCE);
+        Aop.context().beanAroundAdd(SaCheckBasic.class, SaTokenMethodInterceptor.INSTANCE);
 
         //集成初始化
 
@@ -42,9 +50,15 @@ public class XPluginImp implements Plugin {
         SaTokenConfig saTokenConfig = Solon.cfg().getBean("sa-token", SaTokenConfig.class);
         SaManager.setConfig(saTokenConfig);
 
-        //注入容器交互Bean
+        // 注入上下文Bean
         SaManager.setSaTokenContext(new SaContextForSolon());
 
+        // 注入二级上下文 Bean 
+        Aop.getAsyn(SaTokenSecondContextCreator.class, bw->{
+        	SaTokenSecondContextCreator raw = bw.raw();
+            SaManager.setSaTokenSecondContext(raw.create());
+        });
+        
         // 注入侦听器 Bean
         Aop.getAsyn(SaTokenListener.class, bw->{
             SaManager.setSaTokenListener(bw.raw());
@@ -75,10 +89,21 @@ public class XPluginImp implements Plugin {
         	SaIdUtil.saIdTemplate = bw.raw();
         });
 
+        // Sa-Token Http Basic 认证模块 Bean 
+        Aop.getAsyn(SaBasicTemplate.class, bw->{
+        	SaBasicUtil.saBasicTemplate = bw.raw();
+        });
+
         // Sa-Token-SSO 单点登录模块 Bean
         Aop.getAsyn(SaSsoTemplate.class, bw->{
         	SaSsoUtil.saSsoTemplate = bw.raw();
         });
+
+        // 自定义 StpLogic 对象 
+        Aop.getAsyn(StpLogic.class, bw->{
+        	StpUtil.setStpLogic(bw.raw());
+        });
         
     }
+	
 }

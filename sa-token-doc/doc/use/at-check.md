@@ -9,6 +9,7 @@
 - `@SaCheckRole("admin")`: 角色认证 —— 必须具有指定角色标识才能进入该方法 
 - `@SaCheckPermission("user:add")`: 权限认证 —— 必须具有指定权限才能进入该方法 
 - `@SaCheckSafe`: 二级认证校验 —— 必须二级认证之后才能进入该方法 
+- `@SaCheckBasic`: HttpBasic认证 —— 只有通过 Basic 认证后才能进入该方法 
 
 Sa-Token使用全局拦截器完成注解鉴权功能，为了不为项目带来不必要的性能负担，拦截器默认处于关闭状态<br>
 因此，为了使用注解鉴权，你必须手动将Sa-Token的全局拦截器注册到你项目中
@@ -65,6 +66,13 @@ public String add() {
 public String add() {
 	return "用户增加";
 }
+
+// Http Basic 认证：只有通过 Basic 认证后才能进入该方法 
+@SaCheckBasic(account = "sa:123456")
+@RequestMapping("add")
+public String add() {
+	return "用户增加";
+}
 ```
 
 注：以上注解都可以加在类上，代表为这个类所有方法进行鉴权
@@ -81,14 +89,30 @@ public AjaxJson atJurOr() {
 }
 ```
 
-
 mode有两种取值：
 - `SaMode.AND`, 标注一组权限，会话必须全部具有才可通过校验
 - `SaMode.OR`, 标注一组权限，会话只要具有其一即可通过校验
 
 
+### 4、角色权限双重 “or校验” 
+假设有以下业务场景：一个接口在具体权限 `user-add` 或角色 `admin` 时可以调通。怎么写？
 
-### 4、在业务逻辑层使用注解鉴权
+``` java
+// 注解式鉴权：只要具有其中一个权限即可通过校验 
+@RequestMapping("userAdd")
+@SaCheckPermission(value = "user-add", orRole = "admin")		
+public AjaxJson userAdd() {
+	return AjaxJson.getSuccessData("用户信息");
+}
+```
+
+orRole 字段代表权限认证未通过时的次要选择，两者只要其一认证成功即可通过校验，其有三种写法：
+- 写法一：`orRole = "admin"`，代表需要拥有角色 admin 。
+- 写法二：`orRole = {"admin", "manager", "staff"}`，代表具有三个角色其一即可。
+- 写法三：`orRole = {"admin, manager, staff"}`，代表必须同时具有三个角色。
+
+
+### 5、在业务逻辑层使用注解鉴权
 疑问：我能否将注解写在其它架构层呢，比如业务逻辑层？
 
 使用拦截器模式，只能在`Controller层`进行注解鉴权，如需在任意层级使用注解鉴权，请参考：[AOP注解鉴权](/plugin/aop-at)

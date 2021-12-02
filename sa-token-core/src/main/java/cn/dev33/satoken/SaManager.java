@@ -9,6 +9,7 @@ import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.config.SaTokenConfigFactory;
 import cn.dev33.satoken.context.SaTokenContext;
 import cn.dev33.satoken.context.SaTokenContextDefaultImpl;
+import cn.dev33.satoken.context.second.SaTokenSecondContext;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoDefaultImpl;
 import cn.dev33.satoken.exception.SaTokenException;
@@ -18,21 +19,22 @@ import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpInterfaceDefaultImpl;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.temp.SaTempInterface;
 import cn.dev33.satoken.temp.SaTempDefaultImpl;
+import cn.dev33.satoken.temp.SaTempInterface;
 import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
- * 管理 Sa-Token 所有接口对象 
+ * 管理 Sa-Token 所有全局组件  
  * @author kong
  *
  */
+@SuppressWarnings("deprecation")
 public class SaManager {
 
 	/**
 	 * 配置文件 Bean 
 	 */
-	public static SaTokenConfig config;	
+	public volatile static SaTokenConfig config;	
 	public static void setConfig(SaTokenConfig config) {
 		SaManager.config = config;
 		if(config.getIsPrint()) {
@@ -55,7 +57,7 @@ public class SaManager {
 	/**
 	 * 持久化 Bean 
 	 */
-	private static SaTokenDao saTokenDao;
+	private volatile static SaTokenDao saTokenDao;
 	public static void setSaTokenDao(SaTokenDao saTokenDao) {
 		if((SaManager.saTokenDao instanceof SaTokenDaoDefaultImpl)) {
 			((SaTokenDaoDefaultImpl)SaManager.saTokenDao).endRefreshThread();
@@ -76,7 +78,7 @@ public class SaManager {
 	/**
 	 * 权限认证 Bean 
 	 */
-	private static StpInterface stpInterface;
+	private volatile static StpInterface stpInterface;
 	public static void setStpInterface(StpInterface stpInterface) {
 		SaManager.stpInterface = stpInterface;
 	}
@@ -94,7 +96,7 @@ public class SaManager {
 	/**
 	 * 框架行为 Bean 
 	 */
-	private static SaTokenAction saTokenAction;
+	private volatile static SaTokenAction saTokenAction;
 	public static void setSaTokenAction(SaTokenAction saTokenAction) {
 		SaManager.saTokenAction = saTokenAction;
 	}
@@ -110,27 +112,55 @@ public class SaManager {
 	}
 	
 	/**
-	 * 容器操作 Bean  
+	 * 上下文Context Bean  
 	 */
-	private static SaTokenContext saTokenContext;
+	private volatile static SaTokenContext saTokenContext;
 	public static void setSaTokenContext(SaTokenContext saTokenContext) {
 		SaManager.saTokenContext = saTokenContext;
 	}
 	public static SaTokenContext getSaTokenContext() {
-		if (saTokenContext == null) {
-			synchronized (SaManager.class) {
-				if (saTokenContext == null) {
-					setSaTokenContext(new SaTokenContextDefaultImpl());
-				}
+		return saTokenContext;
+	}
+	
+	/**
+	 * 二级Context 
+	 */
+	private volatile static SaTokenSecondContext saTokenSecondContext;
+	public static SaTokenSecondContext getSaTokenSecondContext() {
+		return saTokenSecondContext;
+	}
+	public static void setSaTokenSecondContext(SaTokenSecondContext saTokenSecondContext) {
+		SaManager.saTokenSecondContext = saTokenSecondContext;
+	}
+	
+	/**
+	 * 获取一个可用的SaTokenContext 
+	 * @return / 
+	 */
+	public static SaTokenContext getSaTokenContextOrSecond() {
+		
+		// s1. 一级Context可用时返回一级Context
+		if(saTokenContext != null) {
+			if(saTokenSecondContext == null || saTokenContext.isValid()) {
+				// 因为 isValid 是一个耗时操作，所以此处假定：二级Context为null的情况下无需验证一级Context有效性 
+				// 这样可以提升6倍左右的上下文获取速度 
+				return saTokenContext;
 			}
 		}
-		return saTokenContext;
+		
+		// s2. 一级Context不可用时判断二级Context是否可用 
+		if(saTokenSecondContext != null && saTokenSecondContext.isValid()) {
+			return saTokenSecondContext;
+		}
+		
+		// s3. 都不行，就返回默认的 Context 
+		return SaTokenContextDefaultImpl.defaultContext; 
 	}
 
 	/**
 	 * 侦听器 Bean  
 	 */
-	private static SaTokenListener saTokenListener;
+	private volatile static SaTokenListener saTokenListener;
 	public static void setSaTokenListener(SaTokenListener saTokenListener) {
 		SaManager.saTokenListener = saTokenListener;
 	}
@@ -148,7 +178,7 @@ public class SaManager {
 	/**
 	 * 临时令牌验证模块 Bean  
 	 */
-	private static SaTempInterface saTemp;
+	private volatile static SaTempInterface saTemp;
 	public static void setSaTemp(SaTempInterface saTemp) {
 		SaManager.saTemp = saTemp;
 	}

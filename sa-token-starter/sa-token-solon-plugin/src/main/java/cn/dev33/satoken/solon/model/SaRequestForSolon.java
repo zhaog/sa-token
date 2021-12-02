@@ -1,7 +1,10 @@
 package cn.dev33.satoken.solon.model;
 
-import cn.dev33.satoken.context.model.SaRequest;
 import org.noear.solon.core.handle.Context;
+
+import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.context.model.SaRequest;
+import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
  * @author noear
@@ -9,7 +12,7 @@ import org.noear.solon.core.handle.Context;
  */
 public class SaRequestForSolon implements SaRequest {
     
-	Context ctx;
+	protected Context ctx;
     
 	public SaRequestForSolon(){
         ctx = Context.current();
@@ -42,6 +45,10 @@ public class SaRequestForSolon implements SaRequest {
 
     @Override
 	public String getUrl() {
+		String currDomain = SaManager.getConfig().getCurrDomain();
+		if(SaFoxUtil.isEmpty(currDomain) == false) {
+			return currDomain + this.getRequestPath();
+		}
 		return ctx.url();
 	}
     
@@ -49,4 +56,11 @@ public class SaRequestForSolon implements SaRequest {
     public String getMethod() {
         return ctx.method();
     }
+
+    @Override
+	public Object forward(String path) {
+    	ctx.forward(path);
+    	return null;
+	}
+	
 }

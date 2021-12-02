@@ -1,9 +1,16 @@
 package cn.dev33.satoken.servlet.model;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.context.model.SaRequest;
+import cn.dev33.satoken.exception.SaTokenException;
+import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
  * Request for Servlet 
@@ -15,7 +22,7 @@ public class SaRequestForServlet implements SaRequest {
 	/**
 	 * 底层Request对象
 	 */
-	HttpServletRequest request;
+	protected HttpServletRequest request;
 	
 	/**
 	 * 实例化
@@ -74,10 +81,14 @@ public class SaRequestForServlet implements SaRequest {
 	}
 
 	/**
-	 * 返回当前请求的url，例：http://xxx.com/?id=127
+	 * 返回当前请求的url，例：http://xxx.com/test
 	 * @return see note
 	 */
 	public String getUrl() {
+		String currDomain = SaManager.getConfig().getCurrDomain();
+		if(SaFoxUtil.isEmpty(currDomain) == false) {
+			return currDomain + this.getRequestPath();
+		}
 		return request.getRequestURL().toString();
 	}
 	
@@ -89,4 +100,18 @@ public class SaRequestForServlet implements SaRequest {
 		return request.getMethod();
 	}
 
+	/**
+	 * 转发请求 
+	 */
+	@Override
+	public Object forward(String path) {
+		try {
+			HttpServletResponse response = (HttpServletResponse)SaManager.getSaTokenContextOrSecond().getResponse().getSource();
+			request.getRequestDispatcher(path).forward(request, response);
+			return null;
+		} catch (ServletException | IOException e) {
+			throw new SaTokenException(e);
+		}
+	}
+	
 }

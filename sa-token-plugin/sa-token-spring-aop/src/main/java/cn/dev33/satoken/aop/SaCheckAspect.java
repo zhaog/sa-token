@@ -8,7 +8,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.strategy.SaStrategy;
 import cn.dev33.satoken.util.SaTokenConsts;
 
 /**
@@ -34,7 +34,8 @@ public class SaCheckAspect {
 			"@within(cn.dev33.satoken.annotation.SaCheckLogin) || @annotation(cn.dev33.satoken.annotation.SaCheckLogin) || "
 			+ "@within(cn.dev33.satoken.annotation.SaCheckRole) || @annotation(cn.dev33.satoken.annotation.SaCheckRole) || "
 			+ "@within(cn.dev33.satoken.annotation.SaCheckPermission) || @annotation(cn.dev33.satoken.annotation.SaCheckPermission) || "
-			+ "@within(cn.dev33.satoken.annotation.SaCheckSafe) || @annotation(cn.dev33.satoken.annotation.SaCheckSafe)";
+			+ "@within(cn.dev33.satoken.annotation.SaCheckSafe) || @annotation(cn.dev33.satoken.annotation.SaCheckSafe) || "
+			+ "@within(cn.dev33.satoken.annotation.SaCheckBasic) || @annotation(cn.dev33.satoken.annotation.SaCheckBasic)";
 
 	/**
 	 * 声明AOP签名
@@ -55,7 +56,7 @@ public class SaCheckAspect {
 		
 		// 注解鉴权
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		SaManager.getSaTokenAction().checkMethodAnnotation(signature.getMethod());
+		SaStrategy.me.checkMethodAnnotation.accept(signature.getMethod());
 
 		try {
 			// 执行原有逻辑

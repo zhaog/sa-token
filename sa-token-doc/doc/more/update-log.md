@@ -1,6 +1,74 @@
 # 更新日志 
 
 
+### 2021-11-5 @v1.28.0
+- 新增：新增 `sa-token-jwt` 插件，用于与jwt的整合 **[重要]**
+- 新增：新增 `sa-token-context-dubbo` 插件，用于与 Dubbo 的整合 **[重要]**
+- 文档：文档新增章节：Sa-Token 插件开发指南 **[重要]**
+- 文档：文档新增章节：名称解释
+- 优化：抽离 `getSaTokenDao()` 方法，方便重写 
+- 新增：单元测试新增多账号模式数据不互通测试
+- 优化：优化在线文档，修复部分错误之处 	
+- 优化：优化未登录异常抛出提示，标注无效的Token值 
+- 修复：修复单词拼写错误 `getDeviceOrDefault` 
+- 优化：优化 jwt 集成示例 
+- 文档：新增常见问题总结
+
+
+### 2021-10-11 @v1.27.0
+- 升级：增强 SaRouter 链式匹配能力  	**[重要]**  	
+- 新增：新增插件 Thymeleaf 标签方言   **[重要]**  	
+- 新增：@SaCheckPermission 增加 orRole 字段，用于权限角色“双重or”匹配    **[重要]**
+- 升级：Cookie模式增加 `secure`、`httpOnly`、`sameSite`等属性的配置 	**[重要]**  	
+- 重构：重构SSO三种模式，抽离出统一的认证中心   **[重要]**   
+- 新增：新增 SaStrategy 策略类，方便内部逻辑按需重写 **[重要]**		
+- 新增：临时认证模块新增 deleteToken 方法用于回收 Token  
+- 新增：新增 kickout、replaced 等注销会话的方法，更灵活的控制会话周期  **[重要]** 
+- 新增：权限认证增加API：`StpUtil.hasPermissionAnd`、`StpUtil.hasPermissionOr` 
+- 新增：角色认证增加API：`StpUtil.hasRoleAnd`、`StpUtil.hasRoleOr` 
+- 新增：新增 `StpUtil.getRoleList()` 和 `StpUtil.getPermissionList()` 方法  
+- 新增：新增 StpLogic 自动注入特性，可快速方便的扩展 StpLogic 对象 
+- 优化：优化同端互斥登录逻辑，如果登录时没有指定设备标识，则默认顶替所有设备下线  
+- 优化：在未登录时调用 hasRole 和 hasPermission 不再抛出异常，而是返回false 
+- 升级：升级注解鉴权算法，并提供更简单的重写方式    
+- 文档：新增常见报错排查，方便快速排查异常报错 
+- 文档：文档新增SSO单点登录与OAuth2技术选型对比  
+- 破坏式更新：
+	- [向下兼容] 废弃 SaTokenAction 接口，替代方案： SaStrategy  
+	- [向下兼容] 移除 `StpUtil.logoutByLoginId()` 更换为 `StpUtil.kickout()`;
+	- [不向下兼容] 侦听器 doLogoutByLoginId 与 doReplaced 方法移除 device 参数 
+	- [不向下兼容] 侦听器 doLogoutByLoginId 方法重命名为 doKickout  
+
+
+### 2021-9-2 @v1.26.0
+- 优化：优化单点登录文档 
+- 新增：新增 `Http Basic` 认证 **[重要]** 
+- 新增：文档新增跨域解决方案 
+- 文档：新增 Nginx 转发请求丢失uri的解决方案
+- 文档：新增 SSO 自定义 API 路由示例  **[重要]** 
+- 示例：新增 `SSO-Server` 端前后端分离示例  **[重要]** 
+
+
+### 2021-8-16 @v1.25.0
+- 新增：`SaRequest`新增`getHeader(name, defaultValue)`方法，用于获取header默认值 
+- 新增：`SaRequest` 添加 `forward` 转发方法  
+- 新增：Readme新增源码模块介绍、友情链接、正在使用Sa-Token的项目 
+- 重构：重构SSO单点登录模块源码，增加可读性 
+- 新增：SSO配置表新增所属端说明 
+- 新增：SSO模式三新增账号资料同步示例  **[重要]** 
+- 新增：前后端分离模式下接入SSO的示例  **[重要]** 
+- 优化：优化SSO单点注销重定向逻辑 
+- 重构：重构SSO单点登录模块部分API 
+- 优化：优化SaQuickBean中过滤器处理逻辑  
+- 文档：优化文档样式，增加示例  
+- 文档：代码鉴权、注解鉴权、路由拦截鉴权，选择指南 
+- 文档：文档新增 SSO旧有系统改造指南 
+- 文档：SSO集成文档里添加API列表 
+- 文档：新增 `Sa-Token-Study` 链接，讲解 Sa-Token 源码涉及到的技术点 
+- 不兼容更新重构：
+	- 重构：修复 `SaReactorHolder.getContent()` 拼写错误：`content` -> `context` 
+
+
 ### 2021-7-24 @v1.24.0
 - 修复：修复部分场景下Alone-Redis插件导致项目无法启动的问题
 - 优化：增加对SpringBoot1.x版本的兼容性 

@@ -1,16 +1,19 @@
 package cn.dev33.satoken.action;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.List;
 
 import cn.dev33.satoken.session.SaSession;
 
 /**
- * Sa-Token 逻辑代理接口 
+ * <h1> v1.27+ 此接口已废弃，目前版本暂时向下兼容，请及时更换为 SaStrategy </h1>
+ * <p>Sa-Token 逻辑代理接口 </p> 
  * <p>此接口将会代理框架内部的一些关键性逻辑，方便开发者进行按需重写</p> 
  * @author kong
  *
  */
+@Deprecated
 public interface SaTokenAction {
 
 	/**
@@ -41,5 +44,11 @@ public interface SaTokenAction {
 	 * @param method Method对象
 	 */
 	public void checkMethodAnnotation(Method method);
+	
+	/**
+	 * 从指定元素校验注解 
+	 * @param target /
+	 */
+	public void validateAnnotation(AnnotatedElement target);
 	
 }

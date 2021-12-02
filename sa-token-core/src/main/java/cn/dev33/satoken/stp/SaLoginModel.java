@@ -12,7 +12,6 @@ import cn.dev33.satoken.util.SaTokenConsts;
  */
 public class SaLoginModel {
 
-	
 	/**
 	 * 此次登录的客户端设备标识 
 	 */
@@ -92,6 +91,16 @@ public class SaLoginModel {
 	}
 
 	/**
+	 * @return 获取device参数，如果为null，则返回默认值
+	 */
+	public String getDeviceOrDefault() {
+		if(device == null) {
+			return SaTokenConsts.DEFAULT_LOGIN_DEVICE;
+		}
+		return device;
+	}
+	
+	/**
 	 * 构建对象，初始化默认值 
 	 * @return 对象自身
 	 */
@@ -105,9 +114,9 @@ public class SaLoginModel {
 	 * @return 对象自身
 	 */
 	public SaLoginModel build(SaTokenConfig config) {
-		if(device == null) {
-			device = SaTokenConsts.DEFAULT_LOGIN_DEVICE;
-		}
+//		if(device == null) {
+//			device = SaTokenConsts.DEFAULT_LOGIN_DEVICE;
+//		}
 		if(isLastingCookie == null) {
 			isLastingCookie = true;
 		}
@@ -133,4 +142,13 @@ public class SaLoginModel {
 		return "SaLoginModel [device=" + device + ", isLastingCookie=" + isLastingCookie + ", timeout=" + timeout + "]";
 	}
 
+	
+	/**
+	 * 更换为 getDeviceOrDefault() 
+	 * @return / 
+	 */
+	@Deprecated
+	public String getDeviceOrDefalut() {
+		return getDeviceOrDefault();
+	}
 }

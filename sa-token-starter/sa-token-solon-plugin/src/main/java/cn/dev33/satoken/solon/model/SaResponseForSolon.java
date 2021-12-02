@@ -1,6 +1,5 @@
 package cn.dev33.satoken.solon.model;
 
-import org.noear.solon.Utils;
 import org.noear.solon.core.handle.Context;
 
 import cn.dev33.satoken.context.model.SaResponse;
@@ -11,7 +10,7 @@ import cn.dev33.satoken.context.model.SaResponse;
  */
 public class SaResponseForSolon implements SaResponse {
 	
-    Context ctx;
+	protected Context ctx;
 
     public SaResponseForSolon() {
         ctx = Context.current();
@@ -22,25 +21,28 @@ public class SaResponseForSolon implements SaResponse {
         return ctx;
     }
 
-    @Override
-    public void deleteCookie(String s) {
-        ctx.cookieRemove(s);
-    }
-
-    @Override
-    public void addCookie(String name, String value, String path, String domain, int timeout) {
-        if (Utils.isNotEmpty(path)) {
-            path = "/";
-        }
-
-        ctx.cookieSet(name, value, domain, path, timeout);
-    }
-
+	@Override
+	public SaResponse setStatus(int sc) {
+		ctx.status(sc);
+		return this;
+	}
+	
     @Override
     public SaResponse setHeader(String name, String value) {
         ctx.headerSet(name, value);
         return this;
     }
+
+	/**
+	 * 在响应头里添加一个值 
+	 * @param name 名字
+	 * @param value 值 
+	 * @return 对象自身 
+	 */
+	public SaResponse addHeader(String name, String value) {
+		ctx.headerAdd(name, value);
+		return this;
+	}
     
 	@Override
 	public Object redirect(String url) {

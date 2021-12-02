@@ -3,12 +3,9 @@ package cn.dev33.satoken.reactor.model;
 import java.net.URI;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 
 import cn.dev33.satoken.context.model.SaResponse;
-import cn.dev33.satoken.util.SaFoxUtil;
 
 /**
  * Response for Reactor
@@ -20,7 +17,7 @@ public class SaResponseForReactor implements SaResponse {
 	/**
 	 * 底层Response对象
 	 */
-	ServerHttpResponse response;
+	protected ServerHttpResponse response;
 	
 	/**
 	 * 实例化
@@ -39,41 +36,14 @@ public class SaResponseForReactor implements SaResponse {
 	}
 
 	/**
-	 * 删除指定Cookie 
+	 * 设置响应状态码 
 	 */
 	@Override
-	public void deleteCookie(String name) {
-		addCookie(name, null, null, null, 0);
+	public SaResponse setStatus(int sc) {
+		response.setStatusCode(HttpStatus.valueOf(sc));
+		return this;
 	}
-
-	/**
-	 * 写入指定Cookie 
-	 */
-	@Override
-	public void addCookie(String name, String value, String path, String domain, int timeout) {
-		
-		// 构建CookieBuilder
-		ResponseCookieBuilder builder = ResponseCookie.from(name, value)
-				.domain(domain)
-				.path(path)
-				.maxAge(timeout)
-				;
-		
-		// set path 
-		if(SaFoxUtil.isEmpty(path) == true) {
-			path = "/";
-		}
-		builder.path(path);
-		
-		// set domain 
-		if(SaFoxUtil.isEmpty(domain) == false) {
-			builder.domain(domain);
-		}
-		
-		// 写入Cookie 
-		response.addCookie(builder.build());
-	}
-
+	
 	/**
 	 * 在响应头里写入一个值 
 	 */
@@ -83,6 +53,17 @@ public class SaResponseForReactor implements SaResponse {
 		return this;
 	}
 
+	/**
+	 * 在响应头里添加一个值 
+	 * @param name 名字
+	 * @param value 值 
+	 * @return 对象自身 
+	 */
+	public SaResponse addHeader(String name, String value) {
+		response.getHeaders().add(name, value);
+		return this;
+	}
+	
 	/**
 	 * 重定向 
 	 */

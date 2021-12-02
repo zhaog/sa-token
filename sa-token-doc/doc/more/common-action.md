@@ -12,6 +12,7 @@ SaManager.getStpInterface();        // 获取权限认证对象
 SaManager.getSaTokenAction();       // 获取框架行为对象
 SaManager.getSaTokenContext();      // 获取上下文处理对象
 SaManager.getSaTokenListener();     // 获取侦听器对象 
+SaManager.getSaTemp();              // 获取临时令牌认证模块对象 
 SaManager.getStpLogic("type");      // 获取指定账号类型的StpLogic对象 
 ```
 
@@ -77,8 +78,8 @@ SaManager.setConfig(config);
 ### SpringMVCUtil
 SpringMVC操作的工具类，位于包：`sa-token-spring-boot-starter`
 ``` java
-SpringMVCUtil.getRequest();           // 获取当前会话的 request
-SpringMVCUtil.getResponse();          // 获取当前会话的 response
+SpringMVCUtil.getRequest();           // 获取本次请求的 request 对象 
+SpringMVCUtil.getResponse();          // 获取本次请求的 response 对象 
 ```
 
 
@@ -86,12 +87,12 @@ SpringMVCUtil.getResponse();          // 获取当前会话的 response
 Sa-Token集成Reactor时的 ServerWebExchange 工具类，位于包：`sa-token-reactor-spring-boot-starter`
 ``` java
 // 异步方式获取 ServerWebExchange 对象 
-SaReactorHolder.getContent().map(e -> {
+SaReactorHolder.getContext().map(e -> {
 	System.out.println(e);
 });
 
 // 同步方式获取 ServerWebExchange 对象 
-ServerWebExchange e = SaReactorSyncHolder.getContent();
+ServerWebExchange e = SaReactorSyncHolder.getContext();
 System.out.println(e);
 ```
 

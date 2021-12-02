@@ -1,9 +1,22 @@
 package cn.dev33.satoken.session;
 
 import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.strategy.SaStrategy;
 
 /**
- * 自定义Session工具类
+ * 自定义 Session 工具类 
+ * 
+ * <p>样例：
+ * <pre>
+ * 		// 在一处代码写入数据 
+ * 		SaSession session = SaSessionCustomUtil.getSessionById("role-" + 1001);
+ * 		session.set("count", 1);
+ * 	
+ * 		// 在另一处代码获取数据 
+ * 		SaSession session = SaSessionCustomUtil.getSessionById("role-" + 1001);
+ * 		int count = session.getInt("count");
+ * 		System.out.println("count=" + count);
+ * </pre>
  * 
  * @author kong
  *
@@ -11,12 +24,12 @@ import cn.dev33.satoken.SaManager;
 public class SaSessionCustomUtil {
 
 	/**
-	 * 添加上指定前缀，防止恶意伪造Session
+	 * 添加上指定前缀，防止恶意伪造Session 
 	 */
 	public static String sessionKey = "custom";
 
 	/**
-	 * 拼接Key: 自定义Session的Id
+	 * 拼接Key: 自定义Session的Id 
 	 * 
 	 * @param sessionId 会话id
 	 * @return sessionId
@@ -45,7 +58,7 @@ public class SaSessionCustomUtil {
 	public static SaSession getSessionById(String sessionId, boolean isCreate) {
 		SaSession session = SaManager.getSaTokenDao().getSession(splicingSessionKey(sessionId));
 		if (session == null && isCreate) {
-			session = SaManager.getSaTokenAction().createSession(splicingSessionKey(sessionId));
+			session = SaStrategy.me.createSession.apply(splicingSessionKey(sessionId));
 			SaManager.getSaTokenDao().setSession(session, SaManager.getConfig().getTimeout());		
 		}
 		return session;

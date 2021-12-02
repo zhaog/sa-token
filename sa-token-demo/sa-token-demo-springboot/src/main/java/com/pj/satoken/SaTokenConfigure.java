@@ -1,7 +1,9 @@
 package com.pj.satoken;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,6 +12,7 @@ import com.pj.util.AjaxJson;
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.interceptor.SaAnnotationInterceptor;
+import cn.dev33.satoken.strategy.SaStrategy;
 
 
 /**
@@ -19,18 +22,18 @@ import cn.dev33.satoken.interceptor.SaAnnotationInterceptor;
  */
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
-
+	
 	/**
-	 * 注册sa-token的拦截器，打开注解式鉴权功能 
+	 * 注册Sa-Token 的拦截器，打开注解式鉴权功能 
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// 注册注解拦截器 
-		registry.addInterceptor(new SaAnnotationInterceptor()).addPathPatterns("/**").excludePathPatterns("");
+		registry.addInterceptor(new SaAnnotationInterceptor()).addPathPatterns("/**");
 	}
 	
 	/**
-     * 注册 [sa-token全局过滤器] 
+     * 注册 [Sa-Token 全局过滤器] 
      */
     @Bean
     public SaServletFilter getSaServletFilter() {
@@ -40,10 +43,9 @@ public class SaTokenConfigure implements WebMvcConfigurer {
         		.addInclude("/**")// .addExclude("/favicon.ico")
         		
         		// 认证函数: 每次请求执行 
-        		.setAuth(r -> {
-        			// System.out.println("---------- sa全局认证");
-        			 
-                    // SaRouter.match("/test/test", () -> new Object());
+        		.setAuth(obj -> {
+        			// System.out.println("---------- sa全局认证 " + SaHolder.getRequest().getRequestPath()); 
+        			
         		})
         		
         		// 异常处理函数：每次认证函数发生异常时执行此函数 
@@ -69,5 +71,15 @@ public class SaTokenConfigure implements WebMvcConfigurer {
         		;
     }
     
-
+    /**
+     * 重写 Sa-Token 框架内部算法策略 
+     */
+    @Autowired
+    public void rewriteSaStrategy() {
+    	// 重写Sa-Token的注解处理器，增加注解合并功能 
+    	SaStrategy.me.getAnnotation = (element, annotationClass) -> {
+    		return AnnotatedElementUtils.getMergedAnnotation(element, annotationClass); 
+    	};
+    }
+    
 }

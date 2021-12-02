@@ -1,11 +1,11 @@
-# 多账号验证
+# 多账号认证
 --- 
 
 ### 0、需求场景
 有的时候，我们会在一个项目中设计两套账号体系，比如一个电商系统的 `user表` 和 `admin表`，
 在这种场景下，如果两套账号我们都使用 `StpUtil` 类的API进行登录鉴权，那么势必会发生逻辑冲突
 
-在Sa-Token中，这个问题的模型叫做：多账号体系验证
+在Sa-Token中，这个问题的模型叫做：多账号体系认证
 
 要解决这个问题，我们必须有一个合理的机制将这两套账号的授权给区分开，让它们互不干扰才行
 
@@ -22,7 +22,7 @@
 
 ### 2、解决方案
 
-前面几篇介绍的api调用，都是经过 StpUtil 类的各种静态方法进行授权验证，
+前面几篇介绍的api调用，都是经过 StpUtil 类的各种静态方法进行授权认证，
 而如果我们深入它的源码，[点此阅览](https://gitee.com/dromara/sa-token/blob/master/sa-token-core/src/main/java/cn/dev33/satoken/stp/StpUtil.java) <br/>
 就会发现，此类并没有任何代码逻辑，唯一做的事就是对成员变量`stpLogic`的各个API包装一下进行转发
 
@@ -33,8 +33,8 @@
 
 ### 3、操作示例
 
-比如说，对于原生`StpUtil`类，我们只做`admin账号`权限验证，而对于`user账号`，我们则：
-1. 新建一个新的权限验证类，比如： `StpUserUtil.java`
+比如说，对于原生`StpUtil`类，我们只做`admin账号`权限认证，而对于`user账号`，我们则：
+1. 新建一个新的权限认证类，比如： `StpUserUtil.java`
 2. 将`StpUtil.java`类的全部代码复制粘贴到 `StpUserUtil.java`里
 3. 更改一下其 `LoginType`， 比如：
 
@@ -80,48 +80,20 @@ public String info() {
 
 我们期待一种`[注解继承/合并]`的能力，即：自定义一个注解，标注上`@SaCheckLogin(type = "user")`，然后在方法上标注这个自定义注解，效果等同于标注`@SaCheckLogin(type = "user")`
 
-很遗憾，JDK默认的注解处理器并没有提供这种`[注解继承/合并]`的能力，不过好在我们可以利用Spring的注解处理器，达到同样的目的
+很遗憾，JDK默认的注解处理器并没有提供这种`[注解继承/合并]`的能力，不过好在我们可以利用 Spring 的注解处理器，达到同样的目的
 
 1. 重写Sa-Token默认的注解处理器
 
 ``` java
-/**
- * 继承Sa-Token行为Bean默认实现, 重写部分逻辑 
- */
-@Component
-public class MySaTokenAction extends SaTokenActionDefaultImpl {
-
-	/**
-	 * 重写Sa-Token的注解处理器，加强注解合并功能 
-	 */
-	@Override
-	protected void validateAnnotation(AnnotatedElement target) {
-		
-		// 校验 @SaCheckLogin 注解 
-		if(AnnotatedElementUtils.isAnnotated(target, SaCheckLogin.class)) {
-			SaCheckLogin at = AnnotatedElementUtils.getMergedAnnotation(target, SaCheckLogin.class);
-			SaManager.getStpLogic(at.type()).checkByAnnotation(at);
-		}
-
-		// 校验 @SaCheckRole 注解 
-		if(AnnotatedElementUtils.isAnnotated(target, SaCheckRole.class)) {
-			SaCheckRole at = AnnotatedElementUtils.getMergedAnnotation(target, SaCheckRole.class);
-			SaManager.getStpLogic(at.type()).checkByAnnotation(at);
-		}
-
-		// 校验 @SaCheckPermission 注解
-		if(AnnotatedElementUtils.isAnnotated(target, SaCheckPermission.class)) {
-			SaCheckPermission at = AnnotatedElementUtils.getMergedAnnotation(target, SaCheckPermission.class);
-			SaManager.getStpLogic(at.type()).checkByAnnotation(at);
-		}
-
-		// 校验 @SaCheckSafe 注解
-		if(AnnotatedElementUtils.isAnnotated(target, SaCheckSafe.class)) {
-			SaCheckSafe at = AnnotatedElementUtils.getMergedAnnotation(target, SaCheckSafe.class);
-			SaManager.getStpLogic(null).checkByAnnotation(at);
-		}
-	}
-	
+@Configuration
+public class SaTokenConfigure {
+    @Autowired
+    public void rewriteSaStrategy() {
+    	// 重写Sa-Token的注解处理器，增加注解合并功能 
+		SaStrategy.me.getAnnotation = (element, annotationClass) -> {
+			return AnnotatedElementUtils.getMergedAnnotation(element, annotationClass); 
+		};
+    }
 }
 ```
 
@@ -185,5 +157,30 @@ public class StpUserUtil {
 再次调用 `StpUserUtil.login(10001)` 进行登录授权时，token的名称将不再是 `satoken`，而是我们重写后的 `satoken-user`
 
 
+### 7、不同体系不同 SaTokenConfig 配置
+如果自定义的 StpUserUtil 需要使用不同 SaTokenConfig 对象, 也很简单，参考示例如下：
 
-> 不同体系账号在登录时设置不同的token有效期等信息，详见[登录时指定token有效期](/up/remember-me?id=登录时指定token有效期)
+``` java
+public class StpUserUtil {
+	
+	// 使用匿名子类 重写`stpLogic对象`的一些方法 
+	public static StpLogic stpLogic = new StpLogic("user") {
+		
+		// 首先自定义一个 Config 对象 
+		SaTokenConfig config = new SaTokenConfig()
+			.setTokenName("satoken")
+			.setTimeout(2592000)
+			// ... 其它set
+			;
+		
+		// 然后重写 stpLogic 配置获取方法 
+		@Override
+		public SaTokenConfig getConfig() {
+			return config;
+		}
+	};
+	
+	// ... 
+	
+}
+```
